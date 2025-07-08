@@ -1,0 +1,31 @@
+{
+  "name": "business-central",
+  "version": "1.0.0",
+  "description": "Connect to Business Central via API.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "axios": "^1.9.0",
+    "dotenv": "^16.5.0"
+  },
+  "devDependencies": {
+    "jest": "^30.0.4"
+  },
+  "scripts": {
+    "validate": "node ./src/scripts/validate.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mi-Pod/business-central.git"
+  },
+  "keywords": [],
+  "author": "Dylan Walters",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mi-Pod/business-central/issues"
+  },
+  "homepage": "https://github.com/Mi-Pod/business-central#readme"
+}

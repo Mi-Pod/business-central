@@ -1,0 +1,37 @@
+name: 🔍 Node.js CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🧰 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - name: 🚀 Install dependencies
+        run: npm install
+
+      - name: 📦 Inject environment variables
+        run: |
+          echo "OAUTH_CLIENT=${{ secrets.OAUTH_CLIENT }}" >> .env
+          echo "OAUTH_SECRET=${{ secrets.OAUTH_SECRET }}" >> .env
+          echo "BC_TENANT=${{ secrets.BC_TENANT }}" >> .env
+          echo "BC_ENVIRONMENT=${{ secrets.BC_ENVIRONMENT }}" >> .env
+          echo "BC_COMPANY=${{ secrets.BC_COMPANY }}" >> .env
+
+      - name: 🧪 Run Jest tests
+        run: npm test
