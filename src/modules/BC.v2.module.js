@@ -327,6 +327,19 @@ async function getSalesLineById(id, token = null) {
     return error;
   }
 }
+
+async function createSalesOrderLine(input, token = null){
+    const endpoint = {
+    api: "v2.0",
+    target: `salesOrderLines`,
+  };
+  try {
+    const res = await postBC(endpoint, input, token);
+    return res.data;
+  } catch (error) {
+    return error;
+  }
+}
 async function updateSalesLine(line_id, input, etag, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -597,4 +610,5 @@ module.exports = {
   getSalesQuoteLineById,
   createSalesQuoteLine,
   updateSalesQuoteLine,
+  createSalesOrderLine
 };
