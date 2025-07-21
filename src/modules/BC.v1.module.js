@@ -316,19 +316,19 @@ async function findSalesOrders(filter = { $top: 10 }, token = null) {
     return error;
   }
 }
-
-async function updateSalesOrder(order_no, input, token = null) {
+async function updateSalesOrder(order_no, input, token = null, etag = null) {
   try {
+    if(!etag){
     let filter = {
       $filter: `Document_Type eq 'Order' and No eq '${order_no}'`,
     };
-    let orders = await getSalesOrders(filter);
-    let etag = null;
+    let orders = await findSalesOrders(filter);
     if (orders.length === 1) {
       etag = orders[0]["@odata.etag"];
     } else if (orders.length === 0) {
       console.log(`No Orders Found`);
       return false;
+    }
     }
     let endpoint = {
       api: "ODataV4",
