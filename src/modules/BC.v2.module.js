@@ -328,8 +328,8 @@ async function getSalesLineById(id, token = null) {
   }
 }
 
-async function createSalesOrderLine(input, token = null){
-    const endpoint = {
+async function createSalesOrderLine(input, token = null) {
+  const endpoint = {
     api: "v2.0",
     target: `salesOrderLines`,
   };
@@ -550,10 +550,44 @@ async function getVendors(params = { $top: 10 }, token = null) {
   const res = await getBC(endpoint, params, token);
   return res.value;
 }
+
 async function getVendorById(id, token = null) {
   const endpoint = {
     api: "v2.0",
     target: `vendors(${id})`,
+  };
+  const res = await getBC(endpoint, {}, token);
+  return res;
+}
+
+async function getPdfSalesInvoiceById(id, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `salesInvoices(${id})/pdfDocument`,
+  };
+  const res = await getBC(endpoint, {}, token);
+  return res;
+}
+async function getPdfQuoteById(id, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `salesQuotes(${id})/pdfDocument`,
+  };
+  const res = await getBC(endpoint, {}, token);
+  return res;
+}
+async function getPdfCreditMemoById(id, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `salesCreditMemos(${id})/pdfDocument`,
+  };
+  const res = await getBC(endpoint, {}, token);
+  return res;
+}
+async function getPdfPurchaseInvoiceById(id, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `purchaseInvoices(${id})/pdfDocument`,
   };
   const res = await getBC(endpoint, {}, token);
   return res;
@@ -610,5 +644,9 @@ module.exports = {
   getSalesQuoteLineById,
   createSalesQuoteLine,
   updateSalesQuoteLine,
-  createSalesOrderLine
+  createSalesOrderLine,
+  getPdfSalesInvoiceById,
+  getPdfQuoteById,
+  getPdfCreditMemoById,
+  getPdfPurchaseInvoiceById,
 };
