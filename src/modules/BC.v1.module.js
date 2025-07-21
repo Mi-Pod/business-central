@@ -243,6 +243,27 @@ async function createShopifyVariant(input, token = null) {
     return error;
   }
 }
+async function createOrUpdateShopifyVariant(item_no, price_group, input, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `Shopify_Product_Variants_and_IV_Items`,
+  };
+  const filter = {
+    $filter: `Item_No eq '${item_no}' and Price_Group eq '${price_group}'`,
+  };
+
+  const existing = await getBC(endpoint, filter, token);
+  if(existing.value.length > 0){
+    const etag = existing.value[0]["@odata.etag"];
+    endpoint.target =`Shopify_Product_Variants_and_IV_Items(Item_No='${item_no}',Price_Group='${price_group}')`;
+    const response = await patchBC(endpoint, etag, input, token);
+    return response;
+  }else{
+    const response = await postBC(endpoint, input, token);
+  }
+
+
+}
 
 async function getShopifyVariant(item_no, price_group, token = null) {
   let endpoint = {
@@ -295,6 +316,7 @@ async function findSalesOrders(filter = { $top: 10 }, token = null) {
     return error;
   }
 }
+
 async function updateSalesOrder(order_no, input, token = null) {
   try {
     let filter = {
@@ -486,6 +508,7 @@ module.exports = {
   createShopifyVariant,
   getShopifyVariant,
   deleteShopifyVariant,
+  createOrUpdateShopifyVariant,
   findItemReferenceEntries,
   findSalesPrices,
   findItemAttributes,
