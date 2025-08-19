@@ -122,6 +122,9 @@ async function postBC(endpoint, data, token = null) {
 async function patchBC(endpoint, eTag, data, token = null) {
   return makeBCRequest("patch", endpoint, data, {}, eTag, token);
 }
+async function putBC(endpoint, eTag, data, token = null) {
+  return makeBCRequest("put", endpoint, data, {}, eTag, token);
+}
 
 async function deleteBC(endpoint, eTag, token = null) {
   return makeBCRequest("delete", endpoint, {}, {}, eTag, token);
@@ -131,5 +134,6 @@ module.exports = {
   getBC,
   postBC,
   patchBC,
+  putBC,
   deleteBC,
 }; 

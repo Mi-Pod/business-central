@@ -1,4 +1,4 @@
-const { getBC, patchBC, postBC, deleteBC } = require("../api/BC.api");
+const { getBC, patchBC, postBC, deleteBC, putBC } = require("../api/BC.api");
 const { getAccessToken } = require("../config/OAuth");
 
 // Endpoint Exploration
@@ -63,7 +63,7 @@ async function updateCustomerCard(customer_no, input, token = null) {
     api: "Silverware/apiGroup/v1.0",
     target: `customers(no='${customer_no}')`,
   };
-  const customer = await getBC(endpoint, null, token);
+  const customer = await getBC(endpoint, {}, token);
   let etag = customer.data["@odata.etag"];
 
   try {
@@ -73,6 +73,7 @@ async function updateCustomerCard(customer_no, input, token = null) {
     return error;
   }
 }
+
 async function getCustomersWithFinancialDetail(
   params = { $top: 10 },
   token = null

@@ -485,7 +485,20 @@ async function findAvalaraTransactions(filter = { $top: 10 }, token = null) {
     api: "ODataV4",
     target: `AvalaraTransactions`,
   };
-  let record_set = new Set();
+
+  try {
+    let res = await getBC(endpoint, filter, token);
+    return res.value;
+  } catch (error) {
+    return error;
+  }
+}
+// Customer Licenses
+async function findCustomerLicenses(filter = { $top: 10 }, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `CustomerLicenses`,
+  };
 
   try {
     let res = await getBC(endpoint, filter, token);
@@ -528,4 +541,5 @@ module.exports = {
   findBomParents,
   findBomChildren,
   getItemByNumber,
+  findCustomerLicenses,
 };
