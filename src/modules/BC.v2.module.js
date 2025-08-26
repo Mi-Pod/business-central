@@ -64,11 +64,11 @@ async function updateCustomerCard(customer_no, input, token = null) {
     target: `customers(no='${customer_no}')`,
   };
   const customer = await getBC(endpoint, {}, token);
-  let etag = customer.data["@odata.etag"];
+  let etag = customer["@odata.etag"];
 
   try {
-    const res = await putBC(endpoint, input, etag, token);
-    return res.data;
+    const res = await patchBC(endpoint, etag, input, token);
+    return res;
   } catch (error) {
     return error;
   }
