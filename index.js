@@ -7,8 +7,8 @@
  */
 
 const Connection = require("./src/scripts/validate");
-const BCv2 = require("./src/modules/BC.v2.module");
 const BC = require("./src/modules/BC.v1.module");
+const BCv2 = require("./src/modules/BC.v2.module");
 const { getAccessToken } = require("./src/config/OAuth");
 
 
