@@ -465,7 +465,7 @@ async function getSalesQuoteLinesBySalesQuoteId(id, token = null) {
     target: `salesQuotes(${id})/salesQuoteLines`,
   };
   const res = await getBC(endpoint, {}, token);
-  return res;
+  return res.value;
 }
 async function getSalesQuoteLineById(id, token = null) {
   const endpoint = {
