@@ -189,7 +189,25 @@ async function getSalesOrders(params = { $top: 10 }, token = null) {
     return error;
   }
 }
-async function getSalesOrderById(id, token = null, params = { $top: 10 }) {
+
+async function patchSalesOrder(system_id, input, etag = null, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `salesOrders(${system_id})`,
+  };
+  if (!etag) {
+    const sales_order = await getSalesOrderById(system_id, token);
+    etag = sales_order["@odata.etag"];
+  }
+  try {
+    const res = await patchBC(endpoint, etag, input, token);
+    return res.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+async function getSalesOrderById(id, token = null, params = {}) {
   const endpoint = {
     api: "v2.0",
     target: `salesOrders(${id})`,
@@ -201,6 +219,7 @@ async function getSalesOrderById(id, token = null, params = { $top: 10 }) {
     return error;
   }
 }
+
 async function getSalesHeaders(filter = {}, token = null) {
   const api = {
     api: "Silverware/apiGroup/v1.0",
@@ -213,6 +232,7 @@ async function getSalesHeaders(filter = {}, token = null) {
     return error;
   }
 }
+
 async function updateSalesOrderHeader(order_no, token = null, etag, input) {
   const api = {
     api: "Silverware/apiGroup/v1.0",
@@ -225,6 +245,7 @@ async function updateSalesOrderHeader(order_no, token = null, etag, input) {
     return error;
   }
 }
+
 async function createSalesOrder(input) {
   const token = await getAccessToken();
   const endpoint = {
@@ -238,6 +259,7 @@ async function createSalesOrder(input) {
     return error;
   }
 }
+
 async function openOrder(order_no) {
   const token = await getAccessToken();
   const filter = {
@@ -265,6 +287,7 @@ async function openOrder(order_no) {
     }, delayInMilliseconds);
   }
 }
+
 async function releaseOrder(order_no) {
   const token = await getAccessToken();
   const filter = {
@@ -292,6 +315,7 @@ async function releaseOrder(order_no) {
     }, delayInMilliseconds);
   }
 }
+
 async function getSalesLines(params = { $top: 10 }, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -304,6 +328,7 @@ async function getSalesLines(params = { $top: 10 }, token = null) {
     return error;
   }
 }
+
 async function getSalesLinesByOrderId(id, token = null, params = { $top: 10 }) {
   const endpoint = {
     api: "v2.0",
@@ -316,6 +341,7 @@ async function getSalesLinesByOrderId(id, token = null, params = { $top: 10 }) {
     return error;
   }
 }
+
 async function getSalesLineById(id, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -328,6 +354,34 @@ async function getSalesLineById(id, token = null) {
     return error;
   }
 }
+
+async function deleteSalesOrderLine(id, etag, token = null) {
+      const endpoint = {
+      name: "v2.0",
+      endpoint: `salesOrderLines(${id})`,
+    };
+    try {
+
+    await deleteBC(endpoint, etag, token);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+async function deleteSalesOrder(id, etag, token = null) {
+      const endpoint = {
+      name: "v2.0",
+      endpoint: `salesOrders(${id})`,
+    };
+    try {
+
+    await deleteBC(endpoint, etag, token);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 
 async function createSalesOrderLine(input, token = null) {
   const endpoint = {
@@ -650,4 +704,7 @@ module.exports = {
   getPdfQuoteById,
   getPdfCreditMemoById,
   getPdfPurchaseInvoiceById,
+  patchSalesOrder,
+  deleteSalesOrderLine,
+  deleteSalesOrder,
 };

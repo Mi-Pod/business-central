@@ -452,6 +452,21 @@ async function findSalesLineQuoteKeys(filter = { $top: 10 }, token = null) {
     return error;
   }
 }
+
+async function createSalesLineQuoteKey(input, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `SalesLineQuoteKey`,
+  };
+  try {
+    let res = await postBC(endpoint, filter, token);
+    return res.value;
+  } catch (error) {
+    return error;
+  }
+}
+
+
 async function findSalesHeaderQuery(filter = { $top: 10 }, token = null) {
   let endpoint = {
     api: "ODataV4",
@@ -542,4 +557,5 @@ module.exports = {
   findBomChildren,
   getItemByNumber,
   findCustomerLicenses,
+  createSalesLineQuoteKey
 };
