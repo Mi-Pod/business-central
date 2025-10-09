@@ -26,6 +26,30 @@ async function getItemByNumber(item_no, token = null) {
     return error;
   }
 }
+async function getInvoiceByNumber(invoice_no, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `PostedSalesInvoice(No='${invoice_no}')`,
+  };
+  try {
+    let res = await getBC(endpoint, {}, token);
+    return res;
+  } catch (error) {
+    return error;
+  }
+}
+async function getCustomerByNumber(customer_no, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `CustomerCard(No='${customer_no}')`,
+  };
+  try {
+    let res = await getBC(endpoint, {}, token);
+    return res;
+  } catch (error) {
+    return error;
+  }
+}
 
 // Items: Item Categories
 async function findItemCategories(filter = { $top: 10 }, token = null) {
@@ -243,7 +267,12 @@ async function createShopifyVariant(input, token = null) {
     return error;
   }
 }
-async function createOrUpdateShopifyVariant(item_no, price_group, input, token = null) {
+async function createOrUpdateShopifyVariant(
+  item_no,
+  price_group,
+  input,
+  token = null
+) {
   let endpoint = {
     api: "ODataV4",
     target: `Shopify_Product_Variants_and_IV_Items`,
@@ -253,16 +282,14 @@ async function createOrUpdateShopifyVariant(item_no, price_group, input, token =
   };
 
   const existing = await getBC(endpoint, filter, token);
-  if(existing.value.length > 0){
+  if (existing.value.length > 0) {
     const etag = existing.value[0]["@odata.etag"];
-    endpoint.target =`Shopify_Product_Variants_and_IV_Items(Item_No='${item_no}',Price_Group='${price_group}')`;
+    endpoint.target = `Shopify_Product_Variants_and_IV_Items(Item_No='${item_no}',Price_Group='${price_group}')`;
     const response = await patchBC(endpoint, etag, input, token);
     return response;
-  }else{
+  } else {
     const response = await postBC(endpoint, input, token);
   }
-
-
 }
 
 async function getShopifyVariant(item_no, price_group, token = null) {
@@ -318,17 +345,17 @@ async function findSalesOrders(filter = { $top: 10 }, token = null) {
 }
 async function updateSalesOrder(order_no, input, token = null, etag = null) {
   try {
-    if(!etag){
-    let filter = {
-      $filter: `Document_Type eq 'Order' and No eq '${order_no}'`,
-    };
-    let orders = await findSalesOrders(filter);
-    if (orders.length === 1) {
-      etag = orders[0]["@odata.etag"];
-    } else if (orders.length === 0) {
-      console.log(`No Orders Found`);
-      return false;
-    }
+    if (!etag) {
+      let filter = {
+        $filter: `Document_Type eq 'Order' and No eq '${order_no}'`,
+      };
+      let orders = await findSalesOrders(filter);
+      if (orders.length === 1) {
+        etag = orders[0]["@odata.etag"];
+      } else if (orders.length === 0) {
+        console.log(`No Orders Found`);
+        return false;
+      }
     }
     let endpoint = {
       api: "ODataV4",
@@ -466,7 +493,6 @@ async function createSalesLineQuoteKey(input, token = null) {
   }
 }
 
-
 async function findSalesHeaderQuery(filter = { $top: 10 }, token = null) {
   let endpoint = {
     api: "ODataV4",
@@ -557,5 +583,7 @@ module.exports = {
   findBomChildren,
   getItemByNumber,
   findCustomerLicenses,
-  createSalesLineQuoteKey
+  createSalesLineQuoteKey,
+  getInvoiceByNumber,
+  getCustomerByNumber,
 };

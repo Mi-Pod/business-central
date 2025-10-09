@@ -356,12 +356,11 @@ async function getSalesLineById(id, token = null) {
 }
 
 async function deleteSalesOrderLine(id, etag, token = null) {
-      const endpoint = {
-      name: "v2.0",
-      endpoint: `salesOrderLines(${id})`,
-    };
-    try {
-
+  const endpoint = {
+    name: "v2.0",
+    endpoint: `salesOrderLines(${id})`,
+  };
+  try {
     await deleteBC(endpoint, etag, token);
     return true;
   } catch (error) {
@@ -369,19 +368,17 @@ async function deleteSalesOrderLine(id, etag, token = null) {
   }
 }
 async function deleteSalesOrder(id, etag, token = null) {
-      const endpoint = {
-      name: "v2.0",
-      endpoint: `salesOrders(${id})`,
-    };
-    try {
-
+  const endpoint = {
+    name: "v2.0",
+    endpoint: `salesOrders(${id})`,
+  };
+  try {
     await deleteBC(endpoint, etag, token);
     return true;
   } catch (error) {
     return false;
   }
 }
-
 
 async function createSalesOrderLine(input, token = null) {
   const endpoint = {
@@ -647,9 +644,26 @@ async function getPdfPurchaseInvoiceById(id, token = null) {
   const res = await getBC(endpoint, {}, token);
   return res;
 }
+async function getCustomerByNo(customer_no, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `customers`,
+  };
+  const params = {
+    $filter: `number eq '${customer_no}'`,
+  };
+  try {
+    const res = await getBC(endpoint, params, token);
+    return res.value[0];
+  } catch (error) {
+    console.error(`Error getting customer:`, error.message.red);
+    return null;
+  }
+}
 
 module.exports = {
   getEndpoints,
+  getCustomerByNo,
   listAllEndpoints,
   getCustomers,
   updateCustomer,
