@@ -227,7 +227,7 @@ async function getSalesHeaders(filter = {}, token = null) {
   };
   try {
     const res = await getBC(endpoint, filter, token);
-    return res.value;
+    return res.value
   } catch (error) {
     return error;
   }
@@ -254,7 +254,7 @@ async function createSalesOrder(input) {
   };
   try {
     const res = await postBC(endpoint, input, token);
-    return res.data;
+    return res;
   } catch (error) {
     return error;
   }
@@ -294,20 +294,21 @@ async function releaseOrder(order_no) {
     $filter: `no eq '${order_no}'`,
   };
   const sales_headers = await getSalesHeaders(filter, token);
+
   let etag = null;
-  if (sales_headers.data && sales_headers.data.length > 0) {
+  if (sales_headers && sales_headers.length > 0) {
     etag = sales_headers[0]["@odata.etag"];
   }
   const inputs = [
     {
       swcSVIGENCalced: true,
-    },
-    {
       swcSVReleaseOrder: true,
     },
+
+    
   ];
   for (let i = 0; i < inputs.length; i++) {
-    await updateSalesOrderHeader(order_no, token, etag, inputs[i]);
+    await updateSalesOrderHeader(order_no, token, null, inputs[i]);
     var delayInMilliseconds = 3000; //1 second
 
     setTimeout(function () {
@@ -397,9 +398,14 @@ async function updateSalesLine(line_id, input, etag, token = null) {
     api: "v2.0",
     target: `salesOrderLines(${line_id})`,
   };
+  if(!etag){
+    const sales_line = await getBC(endpoint, {}, token);
+    etag = sales_line["@odata.etag"];
+
+  }
   try {
     const res = await patchBC(endpoint, etag, input, token);
-    return res.data;
+    return res;
   } catch (error) {
     return error;
   }
@@ -412,7 +418,7 @@ async function updateSalesOrderLine(order_no, line_no, input, token = null) {
   const salesLine = await getBC(endpoint, null, token);
   let etag = salesLine.data["@odata.etag"];
   try {
-    const res = await patchBC(endpoint, etag, input, token);
+    const res = await putBC(endpoint, etag, input, token);
     return res;
   } catch (error) {
     return error;

@@ -487,7 +487,7 @@ async function createSalesLineQuoteKey(input, token = null) {
   };
   try {
     let res = await postBC(endpoint, filter, token);
-    return res.value;
+    return res;
   } catch (error) {
     return error;
   }
