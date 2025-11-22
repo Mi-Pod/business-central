@@ -34,6 +34,7 @@ async function getCustomers(params = { $top: 10 }, token = null) {
   const res = await getBC(endpoint, params, token);
   return res.value;
 }
+
 async function createCustomer(input, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -41,7 +42,7 @@ async function createCustomer(input, token = null) {
   };
   try {
     const res = await postBC(endpoint, input, token);
-    return { bc_customer: res.data, token };
+    return res;
   } catch (err) {
     return err;
   }
@@ -123,7 +124,7 @@ async function createCustomerMap(input, token = null) {
     target: "shopifyCustomerMaps",
   };
   const res = await postBC(endpoint, input, token);
-  return res.data;
+  return res;
 }
 async function createDmsRecord(input, token = null) {
   const endpoint = {
