@@ -308,7 +308,7 @@ async function releaseOrder(order_no) {
     
   ];
   for (let i = 0; i < inputs.length; i++) {
-    await updateSalesOrderHeader(order_no, token, null, inputs[i]);
+    await updateSalesOrderHeader(order_no, token, etag, inputs[i]);
     var delayInMilliseconds = 3000; //1 second
 
     setTimeout(function () {
