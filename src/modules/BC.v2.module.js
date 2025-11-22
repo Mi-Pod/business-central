@@ -415,8 +415,8 @@ async function updateSalesOrderLine(order_no, line_no, input, token = null) {
     api: "Silverware/apiGroup/v1.0",
     target: `salesLines(documentType='Order',documentNo='${order_no}',lineNo=${line_no})`,
   };
-  const salesLine = await getBC(endpoint, null, token);
-  let etag = salesLine.data["@odata.etag"];
+  const salesLine = await getBC(endpoint, {}, token);
+  let etag = salesLine["@odata.etag"];
   try {
     const res = await putBC(endpoint, etag, input, token);
     return res;
