@@ -239,8 +239,8 @@ async function updateSalesOrderHeader(order_no, token = null, etag, input) {
     target: `salesHeaders(documentType='Order',no='${order_no}')`,
   };
   try {
-    const res = await patchBC(endpoint, input, etag, token);
-    return res.data;
+    const res = await patchBC(endpoint, etag, input,  token);
+    return res;
   } catch (error) {
     return error;
   }
