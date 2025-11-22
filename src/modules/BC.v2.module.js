@@ -233,14 +233,19 @@ async function getSalesHeaders(filter = {}, token = null) {
   }
 }
 
-async function updateSalesOrderHeader(order_no, token = null, etag, input) {
-  const api = {
+async function updateSalesOrderHeader(order_no, token = null, etag = null, input) {
+  const endpoint = {
     api: "Silverware/apiGroup/v1.0",
     target: `salesHeaders(documentType='Order',no='${order_no}')`,
   };
   try {
-    const res = await patchBC(endpoint, etag, input,  token);
-    return res;
+    if(!etag){
+      const sales_header = await getBC(endpoint, {}, token);
+      etag = sales_header["@odata.etag"];
+    }
+
+    const res = await patchBC(endpoint, etag, input, token);
+    return res.data;
   } catch (error) {
     return error;
   }
@@ -308,6 +313,7 @@ async function releaseOrder(order_no) {
     
   ];
   for (let i = 0; i < inputs.length; i++) {
+    
     await updateSalesOrderHeader(order_no, token, etag, inputs[i]);
     var delayInMilliseconds = 3000; //1 second
 
@@ -415,6 +421,7 @@ async function updateSalesOrderLine(order_no, line_no, input, token = null) {
     api: "Silverware/apiGroup/v1.0",
     target: `salesLines(documentType='Order',documentNo='${order_no}',lineNo=${line_no})`,
   };
+
   const salesLine = await getBC(endpoint, {}, token);
   let etag = salesLine["@odata.etag"];
   try {
