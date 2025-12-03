@@ -248,7 +248,7 @@ async function createShopifyProduct(data, token = null) {
 
   try {
     let res = await postBC(endpoint, data, token);
-    return res.value;
+    return res;
   } catch (error) {
     return error;
   }
@@ -262,7 +262,7 @@ async function getShopifyProduct(code, params = {}, token = null) {
 
   try {
     let res = await getBC(endpoint, params, token);
-    return res.value;
+    return res;
   } catch (error) {
     return error;
   }
@@ -281,7 +281,7 @@ async function updateShopifyProduct(code, data, etag = null, token = null) {
     }
 
     let res = await putBC(endpoint, etag, data, token);
-    return res.value;
+    return res;
   } catch (error) {
     return error;
   }
