@@ -1,4 +1,4 @@
-const { getBC, patchBC, postBC, deleteBC } = require("../api/BC.api");
+const { getBC, patchBC, postBC, deleteBC, putBC } = require("../api/BC.api");
 const { getAccessToken } = require("../config/OAuth");
 
 // Items: Item Cards
@@ -240,6 +240,53 @@ async function findShopifyProducts(filter = { $top: 10 }, token = null) {
   }
 }
 
+async function createShopifyProduct(data, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `Shopify_Products`,
+  };
+
+  try {
+    let res = await postBC(endpoint, data, token);
+    return res.value;
+  } catch (error) {
+    return error;
+  }
+}
+
+async function getShopifyProduct(code, params = {}, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `Shopify_Products(Code='${code}')`,
+  };
+
+  try {
+    let res = await getBC(endpoint, params, token);
+    return res.value;
+  } catch (error) {
+    return error;
+  }
+}
+
+async function updateShopifyProduct(code, data, etag = null, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `Shopify_Products(Code='${code}')`,
+  };
+
+  try {
+    if (!etag) {
+      let rec = await getBC(endpoint, {}, token);
+      etag = rec["@odata.etag"];
+    }
+
+    let res = await putBC(endpoint, etag, data, token);
+    return res.value;
+  } catch (error) {
+    return error;
+  }
+}
+
 // Shopify: Variants
 async function findShopifyVariants(filter = { $top: 10 }, token = null) {
   let endpoint = {
@@ -267,6 +314,7 @@ async function createShopifyVariant(input, token = null) {
     return error;
   }
 }
+
 async function createOrUpdateShopifyVariant(
   item_no,
   price_group,
@@ -343,6 +391,7 @@ async function findSalesOrders(filter = { $top: 10 }, token = null) {
     return error;
   }
 }
+
 async function updateSalesOrder(order_no, input, token = null, etag = null) {
   try {
     if (!etag) {
@@ -551,6 +600,9 @@ async function findCustomerLicenses(filter = { $top: 10 }, token = null) {
 
 module.exports = {
   findItems,
+  createShopifyProduct,
+  getShopifyProduct,
+  updateShopifyProduct,
   findQuantities,
   findSalesOrders,
   findSalesLines,
