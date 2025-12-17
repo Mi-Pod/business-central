@@ -686,14 +686,16 @@ async function getCustomerByNo(customer_no, token = null) {
     console.error(`Error getting customer:`, error.message.red);
     return null;
   }
-}
+};
+
+
 
 module.exports = {
   getEndpoints,
   getCustomerByNo,
   listAllEndpoints,
-  getJobQueueEntries,
-  getJobQueueEntry,
+  // getJobQueueEntries,
+  // getJobQueueEntry,
   getCustomers,
   updateCustomer,
   updateCustomerCard,
