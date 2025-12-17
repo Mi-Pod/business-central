@@ -9,6 +9,7 @@ async function getEndpoints(api) {
   const endpoints = await getBC(endpoint);
   return endpoints.value;
 }
+
 async function listAllEndpoints() {
   const apis = [
     "Silverware/apiGroup/v1.0",
@@ -23,6 +24,33 @@ async function listAllEndpoints() {
       console.log(`(${kind}) ${name}: ${url}`);
     }
   }
+}
+// Purchase Receipts
+
+async function getPurchaseReceipts(params = { $top: 10 }, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: "purchaseReceipts",
+  };
+  const res = await getBC(endpoint, params, token);
+  return res.value;
+}
+
+async function getPurchaseReceiptById(id, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `purchaseReceipts(${id})`,
+  };
+  const res = await getBC(endpoint, {}, token);
+  return res;
+}
+async function getPurchaseReceiptLinesById(id, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `purchaseReceipts(${id})/purchaseReceiptLines`,
+  };
+  const res = await getBC(endpoint, {}, token);
+  return res;
 }
 
 // Customers
@@ -754,4 +782,7 @@ module.exports = {
   patchSalesOrder,
   deleteSalesOrderLine,
   deleteSalesOrder,
+  getPurchaseReceipts,
+  getPurchaseReceiptById,
+  getPurchaseReceiptLinesById,
 };
