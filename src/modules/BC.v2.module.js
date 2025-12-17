@@ -50,7 +50,7 @@ async function getPurchaseReceiptLinesById(id, token = null) {
     target: `purchaseReceipts(${id})/purchaseReceiptLines`,
   };
   const res = await getBC(endpoint, {}, token);
-  return res;
+  return res.value;
 }
 
 // Customers
