@@ -34,6 +34,7 @@ async function getCustomers(params = { $top: 10 }, token = null) {
   const res = await getBC(endpoint, params, token);
   return res.value;
 }
+
 async function createCustomer(input, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -41,7 +42,7 @@ async function createCustomer(input, token = null) {
   };
   try {
     const res = await postBC(endpoint, input, token);
-    return { bc_customer: res.data, token };
+    return res;
   } catch (err) {
     return err;
   }
@@ -123,7 +124,7 @@ async function createCustomerMap(input, token = null) {
     target: "shopifyCustomerMaps",
   };
   const res = await postBC(endpoint, input, token);
-  return res.data;
+  return res;
 }
 async function createDmsRecord(input, token = null) {
   const endpoint = {
@@ -189,7 +190,25 @@ async function getSalesOrders(params = { $top: 10 }, token = null) {
     return error;
   }
 }
-async function getSalesOrderById(id, token = null, params = { $top: 10 }) {
+
+async function patchSalesOrder(system_id, input, etag = null, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `salesOrders(${system_id})`,
+  };
+  if (!etag) {
+    const sales_order = await getSalesOrderById(system_id, token);
+    etag = sales_order["@odata.etag"];
+  }
+  try {
+    const res = await patchBC(endpoint, etag, input, token);
+    return res.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+async function getSalesOrderById(id, token = null, params = {}) {
   const endpoint = {
     api: "v2.0",
     target: `salesOrders(${id})`,
@@ -201,6 +220,7 @@ async function getSalesOrderById(id, token = null, params = { $top: 10 }) {
     return error;
   }
 }
+
 async function getSalesHeaders(filter = {}, token = null) {
   const api = {
     api: "Silverware/apiGroup/v1.0",
@@ -208,23 +228,30 @@ async function getSalesHeaders(filter = {}, token = null) {
   };
   try {
     const res = await getBC(endpoint, filter, token);
-    return res.value;
+    return res.value
   } catch (error) {
     return error;
   }
 }
-async function updateSalesOrderHeader(order_no, token = null, etag, input) {
-  const api = {
+
+async function updateSalesOrderHeader(order_no, token = null, etag = null, input) {
+  const endpoint = {
     api: "Silverware/apiGroup/v1.0",
     target: `salesHeaders(documentType='Order',no='${order_no}')`,
   };
   try {
-    const res = await patchBC(endpoint, input, etag, token);
+    if(!etag){
+      const sales_header = await getBC(endpoint, {}, token);
+      etag = sales_header["@odata.etag"];
+    }
+
+    const res = await patchBC(endpoint, etag, input, token);
     return res.data;
   } catch (error) {
     return error;
   }
 }
+
 async function createSalesOrder(input) {
   const token = await getAccessToken();
   const endpoint = {
@@ -233,11 +260,12 @@ async function createSalesOrder(input) {
   };
   try {
     const res = await postBC(endpoint, input, token);
-    return res.data;
+    return res;
   } catch (error) {
     return error;
   }
 }
+
 async function openOrder(order_no) {
   const token = await getAccessToken();
   const filter = {
@@ -265,25 +293,28 @@ async function openOrder(order_no) {
     }, delayInMilliseconds);
   }
 }
+
 async function releaseOrder(order_no) {
   const token = await getAccessToken();
   const filter = {
     $filter: `no eq '${order_no}'`,
   };
   const sales_headers = await getSalesHeaders(filter, token);
+
   let etag = null;
-  if (sales_headers.data && sales_headers.data.length > 0) {
+  if (sales_headers && sales_headers.length > 0) {
     etag = sales_headers[0]["@odata.etag"];
   }
   const inputs = [
     {
       swcSVIGENCalced: true,
-    },
-    {
       swcSVReleaseOrder: true,
     },
+
+    
   ];
   for (let i = 0; i < inputs.length; i++) {
+    
     await updateSalesOrderHeader(order_no, token, etag, inputs[i]);
     var delayInMilliseconds = 3000; //1 second
 
@@ -292,6 +323,7 @@ async function releaseOrder(order_no) {
     }, delayInMilliseconds);
   }
 }
+
 async function getSalesLines(params = { $top: 10 }, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -304,6 +336,7 @@ async function getSalesLines(params = { $top: 10 }, token = null) {
     return error;
   }
 }
+
 async function getSalesLinesByOrderId(id, token = null, params = { $top: 10 }) {
   const endpoint = {
     api: "v2.0",
@@ -316,6 +349,7 @@ async function getSalesLinesByOrderId(id, token = null, params = { $top: 10 }) {
     return error;
   }
 }
+
 async function getSalesLineById(id, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -326,6 +360,31 @@ async function getSalesLineById(id, token = null) {
     return res;
   } catch (error) {
     return error;
+  }
+}
+
+async function deleteSalesOrderLine(id, etag, token = null) {
+  const endpoint = {
+    name: "v2.0",
+    endpoint: `salesOrderLines(${id})`,
+  };
+  try {
+    await deleteBC(endpoint, etag, token);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+async function deleteSalesOrder(id, etag, token = null) {
+  const endpoint = {
+    name: "v2.0",
+    endpoint: `salesOrders(${id})`,
+  };
+  try {
+    await deleteBC(endpoint, etag, token);
+    return true;
+  } catch (error) {
+    return false;
   }
 }
 
@@ -346,9 +405,14 @@ async function updateSalesLine(line_id, input, etag, token = null) {
     api: "v2.0",
     target: `salesOrderLines(${line_id})`,
   };
+  if(!etag){
+    const sales_line = await getBC(endpoint, {}, token);
+    etag = sales_line["@odata.etag"];
+
+  }
   try {
     const res = await patchBC(endpoint, etag, input, token);
-    return res.data;
+    return res;
   } catch (error) {
     return error;
   }
@@ -358,24 +422,11 @@ async function updateSalesOrderLine(order_no, line_no, input, token = null) {
     api: "Silverware/apiGroup/v1.0",
     target: `salesLines(documentType='Order',documentNo='${order_no}',lineNo=${line_no})`,
   };
-  const salesLine = await getBC(endpoint, null, token);
-  let etag = salesLine.data["@odata.etag"];
+
+  const salesLine = await getBC(endpoint, {}, token);
+  let etag = salesLine["@odata.etag"];
   try {
-    const res = await patchBC(endpoint, etag, input, token);
-    return res;
-  } catch (error) {
-    return error;
-  }
-}
-async function updateSalesDocumentLine (order_no, type, line_no, input, token = null) {
-  const endpoint = {
-    api: "Silverware/apiGroup/v1.0",
-    target: `salesLines(documentType='${type}',documentNo='${order_no}',lineNo=${line_no})`,
-  };
-  const salesLine = await getBC(endpoint, null, token);
-  let etag = salesLine.data["@odata.etag"];
-  try {
-    const res = await patchBC(endpoint, etag, input, token);
+    const res = await putBC(endpoint, etag, input, token);
     return res;
   } catch (error) {
     return error;
@@ -620,39 +671,26 @@ async function getPdfPurchaseInvoiceById(id, token = null) {
   const res = await getBC(endpoint, {}, token);
   return res;
 }
-
-async function getLocations(params = { $top: 10 }, token = null){
-    const endpoint = {
+async function getCustomerByNo(customer_no, token = null) {
+  const endpoint = {
     api: "v2.0",
-    target: "locations",
+    target: `customers`,
   };
-  const res = await getBC(endpoint, params, token);
-  return res.value;
-
-}async function getJobQueueEntries(params = { $top: 10 }, token = null){
-    const endpoint = {
-    api: "v2.0",
-    target: "jobQueueEntries",
+  const params = {
+    $filter: `number eq '${customer_no}'`,
   };
-  const res = await getBC(endpoint, params, token);
-  return res.value;
-
-}
-async function getJobQueueEntry(id, token = null){
-  if(!id){
-    throw new Error("ID is required.")
+  try {
+    const res = await getBC(endpoint, params, token);
+    return res.value[0];
+  } catch (error) {
+    console.error(`Error getting customer:`, error.message.red);
+    return null;
   }
-    const endpoint = {
-    api: "v2.0",
-    target: `jobQueueEntries(${id})`,
-  };
-  const res = await getBC(endpoint, params, token);
-  return res.value;
-
 }
 
 module.exports = {
   getEndpoints,
+  getCustomerByNo,
   listAllEndpoints,
   getJobQueueEntries,
   getJobQueueEntry,
@@ -711,5 +749,7 @@ module.exports = {
   getPdfQuoteById,
   getPdfCreditMemoById,
   getPdfPurchaseInvoiceById,
-  getLocations,
+  patchSalesOrder,
+  deleteSalesOrderLine,
+  deleteSalesOrder,
 };

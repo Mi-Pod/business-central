@@ -1,4 +1,4 @@
-const { getBC, patchBC, postBC, deleteBC } = require("../api/BC.api");
+const { getBC, patchBC, postBC, deleteBC, putBC } = require("../api/BC.api");
 const { getAccessToken } = require("../config/OAuth");
 
 // Items: Item Cards
@@ -18,6 +18,30 @@ async function getItemByNumber(item_no, token = null) {
   let endpoint = {
     api: "ODataV4",
     target: `ItemCard(no='${item_no}')`,
+  };
+  try {
+    let res = await getBC(endpoint, {}, token);
+    return res;
+  } catch (error) {
+    return error;
+  }
+}
+async function getInvoiceByNumber(invoice_no, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `PostedSalesInvoice(No='${invoice_no}')`,
+  };
+  try {
+    let res = await getBC(endpoint, {}, token);
+    return res;
+  } catch (error) {
+    return error;
+  }
+}
+async function getCustomerByNumber(customer_no, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `CustomerCard(No='${customer_no}')`,
   };
   try {
     let res = await getBC(endpoint, {}, token);
@@ -216,6 +240,53 @@ async function findShopifyProducts(filter = { $top: 10 }, token = null) {
   }
 }
 
+async function createShopifyProduct(data, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `Shopify_Products`,
+  };
+
+  try {
+    let res = await postBC(endpoint, data, token);
+    return res;
+  } catch (error) {
+    return error;
+  }
+}
+
+async function getShopifyProduct(code, params = {}, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `Shopify_Products(Code='${code}')`,
+  };
+
+  try {
+    let res = await getBC(endpoint, params, token);
+    return res;
+  } catch (error) {
+    return error;
+  }
+}
+
+async function updateShopifyProduct(code, data, etag = null, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `Shopify_Products(Code='${code}')`,
+  };
+
+  try {
+    if (!etag) {
+      let rec = await getBC(endpoint, {}, token);
+      etag = rec["@odata.etag"];
+    }
+
+    let res = await putBC(endpoint, etag, data, token);
+    return res;
+  } catch (error) {
+    return error;
+  }
+}
+
 // Shopify: Variants
 async function findShopifyVariants(filter = { $top: 10 }, token = null) {
   let endpoint = {
@@ -243,6 +314,7 @@ async function createShopifyVariant(input, token = null) {
     return error;
   }
 }
+
 async function createOrUpdateShopifyVariant(
   item_no,
   price_group,
@@ -319,6 +391,7 @@ async function findSalesOrders(filter = { $top: 10 }, token = null) {
     return error;
   }
 }
+
 async function updateSalesOrder(order_no, input, token = null, etag = null) {
   try {
     if (!etag) {
@@ -455,18 +528,20 @@ async function findSalesLineQuoteKeys(filter = { $top: 10 }, token = null) {
     return error;
   }
 }
- async function createSalesLineQuoteKey  (input, token = null) {
+
+async function createSalesLineQuoteKey(input, token = null) {
   let endpoint = {
     api: "ODataV4",
     target: `SalesLineQuoteKey`,
   };
   try {
     let res = await postBC(endpoint, input, token);
-    return res.value;
+    return res;
   } catch (error) {
     return error;
   }
-};
+}
+
 async function findSalesHeaderQuery(filter = { $top: 10 }, token = null) {
   let endpoint = {
     api: "ODataV4",
@@ -534,6 +609,9 @@ async function getSalesLineId (type, no, line_no){
 
 module.exports = {
   findItems,
+  createShopifyProduct,
+  getShopifyProduct,
+  updateShopifyProduct,
   findQuantities,
   findSalesOrders,
   findSalesLines,
@@ -567,5 +645,6 @@ module.exports = {
   getItemByNumber,
   findCustomerLicenses,
   createSalesLineQuoteKey,
-  getSalesLineId,
+  getInvoiceByNumber,
+  getCustomerByNumber,
 };
