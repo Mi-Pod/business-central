@@ -711,7 +711,7 @@ module.exports = {
   createSalesOrder,
   openOrder,
   releaseOrder,
-  updateSalesDocumentLine,
+  updateSalesOrderLine,
   getSalesLineById,
   getSalesLines,
   getSalesLinesByOrderId,
