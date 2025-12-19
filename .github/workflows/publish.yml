@@ -1,4 +1,4 @@
-name: 🚀 Publish to npm & GitHub Release
+name: 🚀 Publish to npm (OIDC) & GitHub Release
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write   # ✅ required for npm Trusted Publishing (OIDC)
 
 jobs:
   release:
@@ -37,21 +38,20 @@ jobs:
       - name: 🧪 Run tests
         run: npm test
 
-      # Ensures scoped packages resolve/auth against npmjs registry
-      - name: 🔧 Configure npm scope
+      # Some setups accidentally set NODE_AUTH_TOKEN (setup-node can also influence auth behavior).
+      # For OIDC, make sure we're NOT using a token-based auth path.
+      - name: 🧹 Ensure no npm token auth is set
         run: |
-          npm config set @mipod:registry https://registry.npmjs.org/
+          echo "NODE_AUTH_TOKEN=" >> $GITHUB_ENV
+          echo "NPM_TOKEN=" >> $GITHUB_ENV
+          echo "NPM_AUTH_TOKEN=" >> $GITHUB_ENV
 
-      # Optional sanity check for debugging auth issues
-      - name: 🔐 Verify npm auth
-        run: npm whoami
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # If scoped, this doesn't hurt; helps avoid weird registry scoping issues.
+      - name: 🔧 Configure npm scope registry (optional)
+        run: npm config set @mipod:registry https://registry.npmjs.org/
 
-      - name: 🚀 Publish to npm
+      - name: 🚀 Publish to npm (OIDC trusted publishing)
         run: npm publish --access=public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: 📝 Generate release notes
         id: changelog
