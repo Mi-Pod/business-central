@@ -614,6 +614,15 @@ async function findCustomerLicenses(filter = { $top: 10 }, token = null) {
   }
 }
 
+async function getSalesLineId (type, no, line_no){
+  const filter = {
+    $filter: `DocumentType eq '${type}' and DocumentNo eq '${no}' and LineNo eq ${line_no}`,
+  };
+  let response = await BC.querySalesLines(filter);
+  const system_id = response[0].SystemId;
+  return system_id;
+};
+
 module.exports = {
   findItems,
   createShopifyProduct,

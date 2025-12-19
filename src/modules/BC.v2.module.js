@@ -9,6 +9,7 @@ async function getEndpoints(api) {
   const endpoints = await getBC(endpoint);
   return endpoints.value;
 }
+
 async function listAllEndpoints() {
   const apis = [
     "Silverware/apiGroup/v1.0",
@@ -23,6 +24,33 @@ async function listAllEndpoints() {
       console.log(`(${kind}) ${name}: ${url}`);
     }
   }
+}
+// Purchase Receipts
+
+async function getPurchaseReceipts(params = { $top: 10 }, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: "purchaseReceipts",
+  };
+  const res = await getBC(endpoint, params, token);
+  return res.value;
+}
+
+async function getPurchaseReceiptById(id, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `purchaseReceipts(${id})`,
+  };
+  const res = await getBC(endpoint, {}, token);
+  return res;
+}
+async function getPurchaseReceiptLinesById(id, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `purchaseReceipts(${id})/purchaseReceiptLines`,
+  };
+  const res = await getBC(endpoint, {}, token);
+  return res.value;
 }
 
 // Customers
@@ -534,6 +562,15 @@ async function createSalesQuoteLine(input, token = null) {
   const res = await postBC(endpoint, input, token);
   return res;
 }
+async function createSalesQuoteLineBySalesQuoteId(system_id, input, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `salesQuotes(${system_id})/salesQuoteLines`,
+  };
+  const res = await postBC(endpoint, input, token);
+  return res;
+}
+
 async function updateSalesQuoteLine(id, etag, input, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -626,6 +663,7 @@ async function getVendorById(id, token = null) {
   return res;
 }
 
+
 async function getPdfSalesInvoiceById(id, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -634,6 +672,7 @@ async function getPdfSalesInvoiceById(id, token = null) {
   const res = await getBC(endpoint, {}, token);
   return res;
 }
+
 async function getPdfQuoteById(id, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -642,6 +681,7 @@ async function getPdfQuoteById(id, token = null) {
   const res = await getBC(endpoint, {}, token);
   return res;
 }
+
 async function getPdfCreditMemoById(id, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -650,6 +690,7 @@ async function getPdfCreditMemoById(id, token = null) {
   const res = await getBC(endpoint, {}, token);
   return res;
 }
+
 async function getPdfPurchaseInvoiceById(id, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -673,12 +714,16 @@ async function getCustomerByNo(customer_no, token = null) {
     console.error(`Error getting customer:`, error.message.red);
     return null;
   }
-}
+};
+
+
 
 module.exports = {
   getEndpoints,
   getCustomerByNo,
   listAllEndpoints,
+  // getJobQueueEntries,
+  // getJobQueueEntry,
   getCustomers,
   updateCustomer,
   updateCustomerCard,
@@ -694,10 +739,12 @@ module.exports = {
   createSalesOrder,
   openOrder,
   releaseOrder,
+  updateSalesOrderLine,
   getSalesLineById,
   getSalesLines,
   getSalesLinesByOrderId,
   updateSalesLine,
+  createSalesQuoteLineBySalesQuoteId,
   updateSalesOrderLine,
   getItems,
   getItemCategories,
@@ -735,4 +782,7 @@ module.exports = {
   patchSalesOrder,
   deleteSalesOrderLine,
   deleteSalesOrder,
+  getPurchaseReceipts,
+  getPurchaseReceiptById,
+  getPurchaseReceiptLinesById,
 };
