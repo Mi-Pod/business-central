@@ -44,12 +44,12 @@ async function getPurchaseReceiptById(id, token = null) {
   const res = await getBC(endpoint, {}, token);
   return res;
 }
-async function getPurchaseReceiptLinesById(id, token = null) {
+async function getPurchaseReceiptLinesById(id, params = {}, token = null) {
   const endpoint = {
     api: "v2.0",
     target: `purchaseReceipts(${id})/purchaseReceiptLines`,
   };
-  const res = await getBC(endpoint, {}, token);
+  const res = await getBC(endpoint, params, token);
   return res.value;
 }
 
