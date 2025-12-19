@@ -26,6 +26,22 @@ async function getItemByNumber(item_no, token = null) {
     return error;
   }
 }
+async function updateItemByNumber(item_no, data, etag = null, token = null) {
+  let endpoint = {
+    api: "ODataV4",
+    target: `ItemCard(no='${item_no}')`,
+  };
+  try {
+    if(!etag){
+      const rec = await getBC(endpoint, {}, token);
+      etag = rec["@odata.etag"];
+    }
+    let res = await putBC(endpoint, etag, data, token);
+    return res;
+  } catch (error) {
+    return error;
+  }
+}
 async function getInvoiceByNumber(invoice_no, token = null) {
   let endpoint = {
     api: "ODataV4",
@@ -647,4 +663,5 @@ module.exports = {
   createSalesLineQuoteKey,
   getInvoiceByNumber,
   getCustomerByNumber,
+  updateItemByNumber,
 };
