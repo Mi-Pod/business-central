@@ -677,6 +677,16 @@ async function getSalesCreditMemoById(id, token = null) {
   return res;
 }
 
+async function getSalesCreditMemoLinesByDocumentId(id, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `salesCreditMemos(${id})/salesCreditMemoLines`,
+  };
+  const res = await getBC(endpoint, {}, token);
+  return res;
+
+}
+
 async function getVendorById(id, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -807,4 +817,5 @@ module.exports = {
   getPurchaseReceiptLinesById,
   getSalesCreditMemos,
   getSalesCreditMemoById,
+  getSalesCreditMemoLinesByDocumentId,
 };
