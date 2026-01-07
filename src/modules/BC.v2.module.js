@@ -692,7 +692,7 @@ async function getSalesCreditMemoLines(params = {$top: 10}, token = null) {
     target: `salesCreditMemoLines`,
   };
   const res = await getBC(endpoint, params, token);
-  return res;
+  return res.value;
 
 }
 
