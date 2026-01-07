@@ -256,19 +256,24 @@ async function getSalesHeaders(filter = {}, token = null) {
   };
   try {
     const res = await getBC(endpoint, filter, token);
-    return res.value
+    return res.value;
   } catch (error) {
     return error;
   }
 }
 
-async function updateSalesOrderHeader(order_no, token = null, etag = null, input) {
+async function updateSalesOrderHeader(
+  order_no,
+  token = null,
+  etag = null,
+  input
+) {
   const endpoint = {
     api: "Silverware/apiGroup/v1.0",
     target: `salesHeaders(documentType='Order',no='${order_no}')`,
   };
   try {
-    if(!etag){
+    if (!etag) {
       const sales_header = await getBC(endpoint, {}, token);
       etag = sales_header["@odata.etag"];
     }
@@ -338,11 +343,8 @@ async function releaseOrder(order_no) {
       swcSVIGENCalced: true,
       swcSVReleaseOrder: true,
     },
-
-    
   ];
   for (let i = 0; i < inputs.length; i++) {
-    
     await updateSalesOrderHeader(order_no, token, etag, inputs[i]);
     var delayInMilliseconds = 3000; //1 second
 
@@ -433,10 +435,9 @@ async function updateSalesLine(line_id, input, etag, token = null) {
     api: "v2.0",
     target: `salesOrderLines(${line_id})`,
   };
-  if(!etag){
+  if (!etag) {
     const sales_line = await getBC(endpoint, {}, token);
     etag = sales_line["@odata.etag"];
-
   }
   try {
     const res = await patchBC(endpoint, etag, input, token);
@@ -562,7 +563,11 @@ async function createSalesQuoteLine(input, token = null) {
   const res = await postBC(endpoint, input, token);
   return res;
 }
-async function createSalesQuoteLineBySalesQuoteId(system_id, input, token = null) {
+async function createSalesQuoteLineBySalesQuoteId(
+  system_id,
+  input,
+  token = null
+) {
   const endpoint = {
     api: "v2.0",
     target: `salesQuotes(${system_id})/salesQuoteLines`,
@@ -654,6 +659,24 @@ async function getVendors(params = { $top: 10 }, token = null) {
   return res.value;
 }
 
+async function getSalesCreditMemos(params = { $top: 10 }, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: "salesCreditMemos",
+  };
+  const res = await getBC(endpoint, params, token);
+  return res.value;
+}
+
+async function getSalesCreditMemoById(id, token = null) {
+  const endpoint = {
+    api: "v2.0",
+    target: `salesCreditMemos(${id})`,
+  };
+  const res = await getBC(endpoint, {}, token);
+  return res;
+}
+
 async function getVendorById(id, token = null) {
   const endpoint = {
     api: "v2.0",
@@ -662,7 +685,6 @@ async function getVendorById(id, token = null) {
   const res = await getBC(endpoint, {}, token);
   return res;
 }
-
 
 async function getPdfSalesInvoiceById(id, token = null) {
   const endpoint = {
@@ -714,9 +736,7 @@ async function getCustomerByNo(customer_no, token = null) {
     console.error(`Error getting customer:`, error.message.red);
     return null;
   }
-};
-
-
+}
 
 module.exports = {
   getEndpoints,
@@ -785,4 +805,6 @@ module.exports = {
   getPurchaseReceipts,
   getPurchaseReceiptById,
   getPurchaseReceiptLinesById,
+  getSalesCreditMemos,
+  getSalesCreditMemoById,
 };
