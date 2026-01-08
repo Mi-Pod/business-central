@@ -12,7 +12,7 @@
     "dotenv": "^16.5.0"
   },
   "devDependencies": {
-    "jest": "^30.0.4"
+    "jest": "^30.2.0"
   },
   "scripts": {
     "validate": "node ./src/scripts/validate.js",

@@ -43,6 +43,8 @@ async function testOAuth() {
       result = "Connected succesfully";
     }
   } catch (error) {
+    console.error(error);
+
     result = "Failed to Connect";
   }
   return result;
@@ -56,9 +58,11 @@ async function testBCApi() {
       result = "Issue with Connection";
     } else {
       result = "Connected succesfully";
-      console.log(`- BC V2 Endpoints:`, response.value.length);
+      console.log(`- BC V2 Endpoints:`, response.length);
     }
   } catch (error) {
+    console.error(error);
+
     result = "Failed to Connect";
   }
   return result;
@@ -66,7 +70,7 @@ async function testBCApi() {
 async function testBCWebServices() {
   let result = "Not Connected";
   try {
-    const items = await BC.getItems();
+    const items = await BC.findItems();
     if (!items || items.length !== 10) {
       result = "Issue with Connection";
     } else {
@@ -74,6 +78,8 @@ async function testBCWebServices() {
       console.log(`- Items retrieved:`, items.length);
     }
   } catch (error) {
+    console.error(error);
+
     result = "Failed to Connect";
   }
   return result;
