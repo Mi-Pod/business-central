@@ -2,7 +2,7 @@ const { getAccessToken } = require("../config/OAuth");
 const BC = require("../modules/BC.v1.module");
 const BCv2 = require("../modules/BC.v2.module");
 
-async function validate() {
+exports.validate = async () => {
   console.log(
     `== Initializing Validation for Business Central configuration ==`
   );
@@ -29,9 +29,9 @@ async function validate() {
     );
   }
   return report;
-}
+};
 
-async function testOAuth() {
+exports.testOAuth = async () => {
   let result = "Not Connected";
   try {
     const token = await getAccessToken(null);
@@ -48,8 +48,9 @@ async function testOAuth() {
     result = "Failed to Connect";
   }
   return result;
-}
-async function testBCApi() {
+};
+
+exports.testBCApi = async () => {
   let result = "Not Connected";
   try {
     const api = "v2.0";
@@ -66,8 +67,9 @@ async function testBCApi() {
     result = "Failed to Connect";
   }
   return result;
-}
-async function testBCWebServices() {
+};
+
+exports.testBCWebServices = async () => {
   let result = "Not Connected";
   try {
     const items = await BC.findItems();
@@ -83,11 +85,4 @@ async function testBCWebServices() {
     result = "Failed to Connect";
   }
   return result;
-}
-
-module.exports = {
-  validate,
-  testOAuth,
-  testBCApi,
-  testBCWebServices,
 };

@@ -1,5 +1,5 @@
-require('dotenv').config();
-const https = require('https');
+require("dotenv").config();
+const https = require("https");
 
 let cachedToken = null;
 let tokenExpiry = null;
@@ -53,7 +53,7 @@ async function OAuth() {
   }).toString();
 
   const options = {
-    method: 'POST',
+    method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       "Content-Length": Buffer.byteLength(requestBody),
@@ -80,7 +80,10 @@ async function OAuth() {
             tokenExpiry = new Date(new Date().getTime() + expiresIn * 1000);
             resolve(accessToken);
           } else {
-            console.error("Error retrieving Microsoft OAuth token:", parsedData.error_description || parsedData.error);
+            console.error(
+              "Error retrieving Microsoft OAuth token:",
+              parsedData.error_description || parsedData.error
+            );
             resolve(null);
           }
         } catch (err) {
@@ -105,7 +108,7 @@ async function OAuth() {
  * @param {string|null} providedToken - Optional access token to use.
  * @returns {Promise<string>} - The OAuth access token.
  */
-async function getAccessToken(providedToken) {
+exports.getAccessToken = async (providedToken) => {
   if (providedToken) return providedToken;
 
   const accessToken = await OAuth();
@@ -113,6 +116,4 @@ async function getAccessToken(providedToken) {
     throw new Error("No access token available");
   }
   return accessToken;
-}
-
-module.exports = { getAccessToken };
+};
