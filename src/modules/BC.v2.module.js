@@ -55,6 +55,25 @@ exports.getPurchaseReceiptLinesById = async (id, params = {}, token = null) => {
   const res = await getBC(endpoint, params, token);
   return res.value;
 }
+// salespeoplePurchasers
+exports.getSalespeoplePurchasers = async (params = { $top: 10 }, token = null) => {
+  const endpoint = {
+    api: "v2.0",
+    target: "salespeoplePurchasers",
+  };
+  const res = await getBC(endpoint, params, token);
+  return res.value;
+};
+
+exports.getSalespersonById = async (id, token = null) => {
+  const endpoint = {
+    api: "v2.0",
+    target: `salespeoplePurchasers(${id})`,
+  };
+  const res = await getBC(endpoint, {}, token);
+  return res.value;
+};
+
 
 // Customers
 
