@@ -32,7 +32,7 @@ async function updateItemByNumber(item_no, data, etag = null, token = null) {
     target: `ItemCard(no='${item_no}')`,
   };
   try {
-    if(!etag){
+    if (!etag) {
       const rec = await getBC(endpoint, {}, token);
       etag = rec["@odata.etag"];
     }
@@ -120,6 +120,52 @@ async function findSalesPrices(filter = { $top: 10 }, token = null) {
     return res.value;
   } catch (error) {
     return error;
+  }
+}
+
+async function getSalesPrice(
+  item_number,
+  sales_code,
+  sales_type,
+  unit_of_measure,
+) {
+  const key = `Sales_Type='${sales_type}',Sales_Code='${sales_code}',Item_No='${item_number}',Variant_Code='',Starting_Date=0001-01-01,Currency_Code='',Unit_of_Measure_Code='${unit_of_measure}',Minimum_Quantity=0`;
+  const endpoint = {
+    api: "ODataV4",
+    target: `Sales_Prices(${key})`,
+  };
+  try {
+    let res = await getBC(endpoint, {}, token);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function updateSalesPrice(
+  item_number,
+  sales_code,
+  sales_type,
+  unit_of_measure,
+  inputData,
+  etag = null,
+  token = null,
+) {
+  const key = `Sales_Type='${sales_type}',Sales_Code='${sales_code}',Item_No='${item_number}',Variant_Code='',Starting_Date=0001-01-01,Currency_Code='',Unit_of_Measure_Code='${unit_of_measure}',Minimum_Quantity=0`;
+  const endpoint = {
+    api: "ODataV4",
+    target: `Sales_Prices(${key})`,
+  };
+  try {
+    if (!etag) {
+      const rec = await getBC(endpoint, {}, token);
+      etag = rec["@odata.etag"];
+    }
+
+    const res = await patchBC(endpoint, etag, inputData, token);
+    return res;
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -211,7 +257,7 @@ async function findCustomerCards(filter = { $top: 10 }, token = null) {
 // Customer: Shipping Addresses
 async function findCustomerShipmentAddresses(
   filter = { $top: 10 },
-  token = null
+  token = null,
 ) {
   let endpoint = {
     api: "ODataV4",
@@ -335,7 +381,7 @@ async function createOrUpdateShopifyVariant(
   item_no,
   price_group,
   input,
-  token = null
+  token = null,
 ) {
   let endpoint = {
     api: "ODataV4",
@@ -373,7 +419,7 @@ async function deleteShopifyVariant(
   item_no,
   price_group,
   etag = null,
-  token = null
+  token = null,
 ) {
   if (!token) {
     token = await getAccessToken();
@@ -461,7 +507,7 @@ async function findPostedSalesShipments(filter = { $top: 10 }, token = null) {
 }
 async function findPostedSalesShipmentLines(
   filter = { $top: 10 },
-  token = null
+  token = null,
 ) {
   let endpoint = {
     api: "ODataV4",
@@ -505,7 +551,7 @@ async function findPostedSalesInvoices(filter = { $top: 10 }, token = null) {
 }
 async function findPostedSalesInvoiceLines(
   filter = { $top: 10 },
-  token = null
+  token = null,
 ) {
   let endpoint = {
     api: "ODataV4",
@@ -614,14 +660,14 @@ async function findCustomerLicenses(filter = { $top: 10 }, token = null) {
   }
 }
 
-async function getSalesLineId (type, no, line_no){
+async function getSalesLineId(type, no, line_no) {
   const filter = {
     $filter: `DocumentType eq '${type}' and DocumentNo eq '${no}' and LineNo eq ${line_no}`,
   };
   let response = await BC.querySalesLines(filter);
   const system_id = response[0].SystemId;
   return system_id;
-};
+}
 
 module.exports = {
   findItems,
@@ -664,4 +710,6 @@ module.exports = {
   getInvoiceByNumber,
   getCustomerByNumber,
   updateItemByNumber,
+  getSalesPrice,
+  updateSalesPrice,
 };
