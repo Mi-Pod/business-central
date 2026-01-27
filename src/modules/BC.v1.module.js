@@ -26,7 +26,12 @@ exports.getItemByNumber = async (item_no, token = null) => {
     return error;
   }
 };
-exports.updateItemByNumber = async (item_no, data, etag = null, token = null) => {
+exports.updateItemByNumber = async (
+  item_no,
+  data,
+  etag = null,
+  token = null,
+) => {
   let endpoint = {
     api: "ODataV4",
     target: `ItemCard(no='${item_no}')`,
@@ -82,7 +87,10 @@ exports.findItemCategories = async (filter = { $top: 10 }, token = null) => {
 };
 
 // Items: Item References
-exports.findItemReferenceEntries = async (filter = { $top: 10 }, token = null) => {
+exports.findItemReferenceEntries = async (
+  filter = { $top: 10 },
+  token = null,
+) => {
   let endpoint = {
     api: "ODataV4",
     target: `ItemReferenceEntries`,
@@ -120,6 +128,64 @@ exports.findSalesPrices = async (filter = { $top: 10 }, token = null) => {
     return res.value;
   } catch (error) {
     return error;
+  }
+};
+
+exports.getSalesPrice = async (
+  sales_type,
+  sales_code,
+  item_no,
+  unit_of_measure_code,
+  variant_code = "",
+  starting_date = "0001-01-01",
+  currency_code = "",
+  minimum_quantity = 0,
+  token = null,
+) => {
+  const key = `Sales_Type='${sales_type}',Sales_Code='${sales_code}',Item_No='${item_no}',Variant_Code='${variant_code}',Starting_Date=${starting_date},Currency_Code='${currency_code}',Unit_of_Measure_Code='${unit_of_measure_code}',Minimum_Quantity=${minimum_quantity}`;
+
+  const endpoint = {
+    api: "ODataV4",
+    target: `Sales_Prices(${key})`,
+  };
+  try {
+    const res = await getBC(endpoint, {}, token);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.updateSalesPrice = async (
+  sales_type,
+  sales_code,
+  item_no,
+  unit_of_measure_code,
+  variant_code = "",
+  starting_date = "0001-01-01",
+  currency_code = "",
+  minimum_quantity = 0,
+  data,
+  etag = null,
+  token = null,
+) => {
+  const key = `Sales_Type='${sales_type}',Sales_Code='${sales_code}',Item_No='${item_no}',Variant_Code='${variant_code}',Starting_Date=${starting_date},Currency_Code='${currency_code}',Unit_of_Measure_Code='${unit_of_measure_code}',Minimum_Quantity=${minimum_quantity}`;
+
+  const endpoint = {
+    api: "ODataV4",
+    target: `Sales_Prices(${key})`,
+  };
+
+  try {
+    if (!etag) {
+      const rec = await getBC(endpoint, {}, token);
+      etag = rec["@odata.etag"];
+    }
+
+    const res = await patchBC(endpoint, etag, data, token);
+    return res;
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -211,7 +277,7 @@ exports.findCustomerCards = async (filter = { $top: 10 }, token = null) => {
 // Customer: Shipping Addresses
 exports.findCustomerShipmentAddresses = async (
   filter = { $top: 10 },
-  token = null
+  token = null,
 ) => {
   let endpoint = {
     api: "ODataV4",
@@ -284,7 +350,12 @@ exports.getShopifyProduct = async (code, params = {}, token = null) => {
   }
 };
 
-exports.updateShopifyProduct = async (code, data, etag = null, token = null) => {
+exports.updateShopifyProduct = async (
+  code,
+  data,
+  etag = null,
+  token = null,
+) => {
   let endpoint = {
     api: "ODataV4",
     target: `Shopify_Products(Code='${code}')`,
@@ -335,7 +406,7 @@ exports.createOrUpdateShopifyVariant = async (
   item_no,
   price_group,
   input,
-  token = null
+  token = null,
 ) => {
   let endpoint = {
     api: "ODataV4",
@@ -373,7 +444,7 @@ exports.deleteShopifyVariant = async (
   item_no,
   price_group,
   etag = null,
-  token = null
+  token = null,
 ) => {
   if (!token) {
     token = await getAccessToken();
@@ -408,7 +479,12 @@ exports.findSalesOrders = async (filter = { $top: 10 }, token = null) => {
   }
 };
 
-exports.updateSalesOrder = async (order_no, input, token = null, etag = null) => {
+exports.updateSalesOrder = async (
+  order_no,
+  input,
+  token = null,
+  etag = null,
+) => {
   try {
     if (!etag) {
       let filter = {
@@ -447,7 +523,10 @@ exports.findSalesLines = async (filter = { $top: 10 }, token = null) => {
 };
 
 // Sales Shipments
-exports.findPostedSalesShipments = async (filter = { $top: 10 }, token = null) => {
+exports.findPostedSalesShipments = async (
+  filter = { $top: 10 },
+  token = null,
+) => {
   let endpoint = {
     api: "ODataV4",
     target: `PostedSalesShipment`,
@@ -461,7 +540,7 @@ exports.findPostedSalesShipments = async (filter = { $top: 10 }, token = null) =
 };
 exports.findPostedSalesShipmentLines = async (
   filter = { $top: 10 },
-  token = null
+  token = null,
 ) => {
   let endpoint = {
     api: "ODataV4",
@@ -491,7 +570,10 @@ exports.findLicensePlates = async (filter = { $top: 10 }, token = null) => {
 };
 
 // Sales Invoices
-exports.findPostedSalesInvoices = async (filter = { $top: 10 }, token = null) => {
+exports.findPostedSalesInvoices = async (
+  filter = { $top: 10 },
+  token = null,
+) => {
   let endpoint = {
     api: "ODataV4",
     target: `PostedSalesInvoice`,
@@ -505,7 +587,7 @@ exports.findPostedSalesInvoices = async (filter = { $top: 10 }, token = null) =>
 };
 exports.findPostedSalesInvoiceLines = async (
   filter = { $top: 10 },
-  token = null
+  token = null,
 ) => {
   let endpoint = {
     api: "ODataV4",
@@ -532,7 +614,10 @@ exports.findQuerySalesLines = async (filter = { $top: 10 }, token = null) => {
     return error;
   }
 };
-exports.findSalesLineQuoteKeys = async (filter = { $top: 10 }, token = null) => {
+exports.findSalesLineQuoteKeys = async (
+  filter = { $top: 10 },
+  token = null,
+) => {
   let endpoint = {
     api: "ODataV4",
     target: `SalesLineQuoteKey`,
@@ -586,7 +671,10 @@ exports.findZipCodes = async (filter = { $top: 10 }, token = null) => {
 };
 
 // Avalara Transactions
-exports.findAvalaraTransactions = async (filter = { $top: 10 }, token = null) => {
+exports.findAvalaraTransactions = async (
+  filter = { $top: 10 },
+  token = null,
+) => {
   let endpoint = {
     api: "ODataV4",
     target: `AvalaraTransactions`,
@@ -621,6 +709,4 @@ exports.getSalesLineId = async (type, no, line_no) => {
   let response = await exports.findQuerySalesLines(filter);
   const system_id = response[0].SystemId;
   return system_id;
-}
-
-
+};
