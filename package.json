@@ -1,6 +1,6 @@
 {
   "name": "businesscentral",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Connect to Business Central via API.",
   "main": "index.js",
   "directories": {
