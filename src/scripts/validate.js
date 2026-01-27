@@ -2,7 +2,7 @@ const { getAccessToken } = require("../config/OAuth");
 const BC = require("../modules/BC.v1.module");
 const BCv2 = require("../modules/BC.v2.module");
 
-async function validate() {
+exports.validate = async () => {
   console.log(
     `== Initializing Validation for Business Central configuration ==`
   );
@@ -29,9 +29,9 @@ async function validate() {
     );
   }
   return report;
-}
+};
 
-async function testOAuth() {
+exports.testOAuth = async () => {
   let result = "Not Connected";
   try {
     const token = await getAccessToken(null);
@@ -43,11 +43,14 @@ async function testOAuth() {
       result = "Connected succesfully";
     }
   } catch (error) {
+    console.error(error);
+
     result = "Failed to Connect";
   }
   return result;
-}
-async function testBCApi() {
+};
+
+exports.testBCApi = async () => {
   let result = "Not Connected";
   try {
     const api = "v2.0";
@@ -56,17 +59,20 @@ async function testBCApi() {
       result = "Issue with Connection";
     } else {
       result = "Connected succesfully";
-      console.log(`- BC V2 Endpoints:`, response.value.length);
+      console.log(`- BC V2 Endpoints:`, response.length);
     }
   } catch (error) {
+    console.error(error);
+
     result = "Failed to Connect";
   }
   return result;
-}
-async function testBCWebServices() {
+};
+
+exports.testBCWebServices = async () => {
   let result = "Not Connected";
   try {
-    const items = await BC.getItems();
+    const items = await BC.findItems();
     if (!items || items.length !== 10) {
       result = "Issue with Connection";
     } else {
@@ -74,14 +80,9 @@ async function testBCWebServices() {
       console.log(`- Items retrieved:`, items.length);
     }
   } catch (error) {
+    console.error(error);
+
     result = "Failed to Connect";
   }
   return result;
-}
-
-module.exports = {
-  validate,
-  testOAuth,
-  testBCApi,
-  testBCWebServices,
 };

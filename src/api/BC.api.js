@@ -63,9 +63,7 @@ function httpRequest({ method, url, headers, body }) {
           }
         } else {
           reject(
-            new Error(
-              `HTTP ${res.statusCode}: ${res.statusMessage}\n${data}`
-            )
+            new Error(`HTTP ${res.statusCode}: ${res.statusMessage}\n${data}`)
           );
         }
       });
@@ -81,7 +79,14 @@ function httpRequest({ method, url, headers, body }) {
   });
 }
 
-async function makeBCRequest(method, endpoint, data = {}, queryParams = {}, eTag = null, token = null) {
+async function makeRequest(
+  method,
+  endpoint,
+  data = {},
+  queryParams = {},
+  eTag = null,
+  token = null
+) {
   try {
     const accessToken = await getAccessToken(token);
     const credentials = getCredentials(endpoint);
@@ -111,29 +116,22 @@ async function makeBCRequest(method, endpoint, data = {}, queryParams = {}, eTag
 }
 
 // Specific API Methods
-async function getBC(endpoint, queryParams = {}, token = null) {
-  return makeBCRequest("get", endpoint, {}, queryParams, null, token);
-}
+exports.getBC = async (endpoint, queryParams = {}, token = null) => {
+  return makeRequest("get", endpoint, {}, queryParams, null, token);
+};
 
-async function postBC(endpoint, data, token = null) {
-  return makeBCRequest("post", endpoint, data, {}, null, token);
-}
+exports.postBC = async (endpoint, data, token = null) => {
+  return makeRequest("post", endpoint, data, {}, null, token);
+};
 
-async function patchBC(endpoint, eTag, data, token = null) {
-  return makeBCRequest("patch", endpoint, data, {}, eTag, token);
-}
-async function putBC(endpoint, eTag, data, token = null) {
-  return makeBCRequest("put", endpoint, data, {}, eTag, token);
-}
+exports.patchBC = async (endpoint, eTag, data, token = null) => {
+  return makeRequest("patch", endpoint, data, {}, eTag, token);
+};
 
-async function deleteBC(endpoint, eTag, token = null) {
-  return makeBCRequest("delete", endpoint, {}, {}, eTag, token);
-}
+exports.putBC = async (endpoint, eTag, data, token = null) => {
+  return makeRequest("put", endpoint, data, {}, eTag, token);
+};
 
-module.exports = {
-  getBC,
-  postBC,
-  patchBC,
-  putBC,
-  deleteBC,
-}; 
+exports.deleteBC = async (endpoint, eTag, token = null) => {
+  return makeRequest("delete", endpoint, {}, {}, eTag, token);
+};

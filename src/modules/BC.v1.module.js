@@ -2,7 +2,7 @@ const { getBC, patchBC, postBC, deleteBC, putBC } = require("../api/BC.api");
 const { getAccessToken } = require("../config/OAuth");
 
 // Items: Item Cards
-async function findItems(filter = { $top: 10 }, token = null) {
+exports.findItems = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `ItemCard`,
@@ -13,8 +13,8 @@ async function findItems(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
-async function getItemByNumber(item_no, token = null) {
+};
+exports.getItemByNumber = async (item_no, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `ItemCard(no='${item_no}')`,
@@ -25,8 +25,8 @@ async function getItemByNumber(item_no, token = null) {
   } catch (error) {
     return error;
   }
-}
-async function updateItemByNumber(item_no, data, etag = null, token = null) {
+};
+exports.updateItemByNumber = async (item_no, data, etag = null, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `ItemCard(no='${item_no}')`,
@@ -41,8 +41,8 @@ async function updateItemByNumber(item_no, data, etag = null, token = null) {
   } catch (error) {
     return error;
   }
-}
-async function getInvoiceByNumber(invoice_no, token = null) {
+};
+exports.getInvoiceByNumber = async (invoice_no, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `PostedSalesInvoice(No='${invoice_no}')`,
@@ -53,8 +53,8 @@ async function getInvoiceByNumber(invoice_no, token = null) {
   } catch (error) {
     return error;
   }
-}
-async function getCustomerByNumber(customer_no, token = null) {
+};
+exports.getCustomerByNumber = async (customer_no, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `CustomerCard(No='${customer_no}')`,
@@ -65,10 +65,10 @@ async function getCustomerByNumber(customer_no, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
 // Items: Item Categories
-async function findItemCategories(filter = { $top: 10 }, token = null) {
+exports.findItemCategories = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Item_Categories`,
@@ -79,10 +79,10 @@ async function findItemCategories(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
 // Items: Item References
-async function findItemReferenceEntries(filter = { $top: 10 }, token = null) {
+exports.findItemReferenceEntries = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `ItemReferenceEntries`,
@@ -93,10 +93,10 @@ async function findItemReferenceEntries(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
 // Items: Item Attributes
-async function findItemAttributes(filter = { $top: 10 }, token = null) {
+exports.findItemAttributes = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `ItemAttributeMapping`,
@@ -107,10 +107,10 @@ async function findItemAttributes(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
 // Items: Sales Prices
-async function findSalesPrices(filter = { $top: 10 }, token = null) {
+exports.findSalesPrices = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Sales_Prices`,
@@ -121,56 +121,10 @@ async function findSalesPrices(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
-
-async function getSalesPrice(
-  item_number,
-  sales_code,
-  sales_type,
-  unit_of_measure,
-) {
-  const key = `Sales_Type='${sales_type}',Sales_Code='${sales_code}',Item_No='${item_number}',Variant_Code='',Starting_Date=0001-01-01,Currency_Code='',Unit_of_Measure_Code='${unit_of_measure}',Minimum_Quantity=0`;
-  const endpoint = {
-    api: "ODataV4",
-    target: `Sales_Prices(${key})`,
-  };
-  try {
-    let res = await getBC(endpoint, {}, token);
-    return res;
-  } catch (error) {
-    throw error;
-  }
-}
-
-async function updateSalesPrice(
-  item_number,
-  sales_code,
-  sales_type,
-  unit_of_measure,
-  inputData,
-  etag = null,
-  token = null,
-) {
-  const key = `Sales_Type='${sales_type}',Sales_Code='${sales_code}',Item_No='${item_number}',Variant_Code='',Starting_Date=0001-01-01,Currency_Code='',Unit_of_Measure_Code='${unit_of_measure}',Minimum_Quantity=0`;
-  const endpoint = {
-    api: "ODataV4",
-    target: `Sales_Prices(${key})`,
-  };
-  try {
-    if (!etag) {
-      const rec = await getBC(endpoint, {}, token);
-      etag = rec["@odata.etag"];
-    }
-
-    const res = await patchBC(endpoint, etag, inputData, token);
-    return res;
-  } catch (error) {
-    throw error;
-  }
-}
+};
 
 // Items: Quantity by Location
-async function findQuantities(filter = { $top: 10 }, token = null) {
+exports.findQuantities = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `WHSQtyOnHand`,
@@ -182,10 +136,10 @@ async function findQuantities(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
 // Items: Assembly Bill-of-Materials (Assembly BOM)
-async function findAssemblyBom(filter = { $top: 10 }, token = null) {
+exports.findAssemblyBom = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Assembly_BOM`,
@@ -196,8 +150,8 @@ async function findAssemblyBom(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
-async function findBomParents(item_no, token = null) {
+};
+exports.findBomParents = async (item_no, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Assembly_BOM`,
@@ -217,8 +171,8 @@ async function findBomParents(item_no, token = null) {
   } catch (error) {
     return error;
   }
-}
-async function findBomChildren(item_no, token = null) {
+};
+exports.findBomChildren = async (item_no, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Assembly_BOM`,
@@ -238,10 +192,10 @@ async function findBomChildren(item_no, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
 // Customer Cards
-async function findCustomerCards(filter = { $top: 10 }, token = null) {
+exports.findCustomerCards = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `CustomerCard`,
@@ -252,13 +206,13 @@ async function findCustomerCards(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
 // Customer: Shipping Addresses
-async function findCustomerShipmentAddresses(
+exports.findCustomerShipmentAddresses = async (
   filter = { $top: 10 },
-  token = null,
-) {
+  token = null
+) => {
   let endpoint = {
     api: "ODataV4",
     target: `CustShipmentAddresses`,
@@ -270,10 +224,10 @@ async function findCustomerShipmentAddresses(
   } catch (error) {
     return error;
   }
-}
+};
 
 // Customer: Contacts
-async function findContacts(filter = { $top: 10 }, token = null) {
+exports.findContacts = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Contacts`,
@@ -285,10 +239,10 @@ async function findContacts(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
 // Shopify: Products
-async function findShopifyProducts(filter = { $top: 10 }, token = null) {
+exports.findShopifyProducts = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Shopify_Products`,
@@ -300,9 +254,9 @@ async function findShopifyProducts(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
-async function createShopifyProduct(data, token = null) {
+exports.createShopifyProduct = async (data, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Shopify_Products`,
@@ -314,9 +268,9 @@ async function createShopifyProduct(data, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
-async function getShopifyProduct(code, params = {}, token = null) {
+exports.getShopifyProduct = async (code, params = {}, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Shopify_Products(Code='${code}')`,
@@ -328,9 +282,9 @@ async function getShopifyProduct(code, params = {}, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
-async function updateShopifyProduct(code, data, etag = null, token = null) {
+exports.updateShopifyProduct = async (code, data, etag = null, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Shopify_Products(Code='${code}')`,
@@ -347,10 +301,10 @@ async function updateShopifyProduct(code, data, etag = null, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
 // Shopify: Variants
-async function findShopifyVariants(filter = { $top: 10 }, token = null) {
+exports.findShopifyVariants = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Shopify_Product_Variants_and_IV_Items`,
@@ -362,9 +316,9 @@ async function findShopifyVariants(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
-async function createShopifyVariant(input, token = null) {
+exports.createShopifyVariant = async (input, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Shopify_Product_Variants_and_IV_Items`,
@@ -375,14 +329,14 @@ async function createShopifyVariant(input, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
-async function createOrUpdateShopifyVariant(
+exports.createOrUpdateShopifyVariant = async (
   item_no,
   price_group,
   input,
-  token = null,
-) {
+  token = null
+) => {
   let endpoint = {
     api: "ODataV4",
     target: `Shopify_Product_Variants_and_IV_Items`,
@@ -400,9 +354,9 @@ async function createOrUpdateShopifyVariant(
   } else {
     const response = await postBC(endpoint, input, token);
   }
-}
+};
 
-async function getShopifyVariant(item_no, price_group, token = null) {
+exports.getShopifyVariant = async (item_no, price_group, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Shopify_Product_Variants_and_IV_Items(Item_No='${item_no}',Price_Group='${price_group}')`,
@@ -413,14 +367,14 @@ async function getShopifyVariant(item_no, price_group, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
-async function deleteShopifyVariant(
+exports.deleteShopifyVariant = async (
   item_no,
   price_group,
   etag = null,
-  token = null,
-) {
+  token = null
+) => {
   if (!token) {
     token = await getAccessToken();
   }
@@ -438,10 +392,10 @@ async function deleteShopifyVariant(
   } catch (error) {
     return error;
   }
-}
+};
 
 // Sales Orders
-async function findSalesOrders(filter = { $top: 10 }, token = null) {
+exports.findSalesOrders = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `SalesOrder`,
@@ -452,15 +406,15 @@ async function findSalesOrders(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
-async function updateSalesOrder(order_no, input, token = null, etag = null) {
+exports.updateSalesOrder = async (order_no, input, token = null, etag = null) => {
   try {
     if (!etag) {
       let filter = {
         $filter: `Document_Type eq 'Order' and No eq '${order_no}'`,
       };
-      let orders = await findSalesOrders(filter);
+      let orders = await exports.findSalesOrders(filter);
       if (orders.length === 1) {
         etag = orders[0]["@odata.etag"];
       } else if (orders.length === 0) {
@@ -477,8 +431,8 @@ async function updateSalesOrder(order_no, input, token = null, etag = null) {
   } catch (error) {
     return error;
   }
-}
-async function findSalesLines(filter = { $top: 10 }, token = null) {
+};
+exports.findSalesLines = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `SalesLines`,
@@ -490,10 +444,10 @@ async function findSalesLines(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
 // Sales Shipments
-async function findPostedSalesShipments(filter = { $top: 10 }, token = null) {
+exports.findPostedSalesShipments = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `PostedSalesShipment`,
@@ -504,11 +458,11 @@ async function findPostedSalesShipments(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
-async function findPostedSalesShipmentLines(
+};
+exports.findPostedSalesShipmentLines = async (
   filter = { $top: 10 },
-  token = null,
-) {
+  token = null
+) => {
   let endpoint = {
     api: "ODataV4",
     target: `PostedSalesShipmenLines`,
@@ -520,10 +474,10 @@ async function findPostedSalesShipmentLines(
   } catch (error) {
     return error;
   }
-}
+};
 
 // License Plates
-async function findLicensePlates(filter = { $top: 10 }, token = null) {
+exports.findLicensePlates = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `LicensePlates`,
@@ -534,10 +488,10 @@ async function findLicensePlates(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
 // Sales Invoices
-async function findPostedSalesInvoices(filter = { $top: 10 }, token = null) {
+exports.findPostedSalesInvoices = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `PostedSalesInvoice`,
@@ -548,11 +502,11 @@ async function findPostedSalesInvoices(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
-async function findPostedSalesInvoiceLines(
+};
+exports.findPostedSalesInvoiceLines = async (
   filter = { $top: 10 },
-  token = null,
-) {
+  token = null
+) => {
   let endpoint = {
     api: "ODataV4",
     target: `PostedSalesInvoiceLines`,
@@ -563,10 +517,10 @@ async function findPostedSalesInvoiceLines(
   } catch (error) {
     return error;
   }
-}
+};
 
 // Sales Document Queries - Order Sync
-async function findQuerySalesLines(filter = { $top: 10 }, token = null) {
+exports.findQuerySalesLines = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `QuerySalesLines`,
@@ -577,8 +531,8 @@ async function findQuerySalesLines(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
-async function findSalesLineQuoteKeys(filter = { $top: 10 }, token = null) {
+};
+exports.findSalesLineQuoteKeys = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `SalesLineQuoteKey`,
@@ -589,9 +543,9 @@ async function findSalesLineQuoteKeys(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
-async function createSalesLineQuoteKey(input, token = null) {
+exports.createSalesLineQuoteKey = async (input, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `SalesLineQuoteKey`,
@@ -602,9 +556,9 @@ async function createSalesLineQuoteKey(input, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
-async function findSalesHeaderQuery(filter = { $top: 10 }, token = null) {
+exports.findSalesHeaderQuery = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `SalesHeaderQuery`,
@@ -615,10 +569,10 @@ async function findSalesHeaderQuery(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
 // Zip Codes
-async function findZipCodes(filter = { $top: 10 }, token = null) {
+exports.findZipCodes = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `Zip_Codes`,
@@ -629,10 +583,10 @@ async function findZipCodes(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
 // Avalara Transactions
-async function findAvalaraTransactions(filter = { $top: 10 }, token = null) {
+exports.findAvalaraTransactions = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `AvalaraTransactions`,
@@ -644,9 +598,9 @@ async function findAvalaraTransactions(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 // Customer Licenses
-async function findCustomerLicenses(filter = { $top: 10 }, token = null) {
+exports.findCustomerLicenses = async (filter = { $top: 10 }, token = null) => {
   let endpoint = {
     api: "ODataV4",
     target: `CustomerLicenses`,
@@ -658,58 +612,15 @@ async function findCustomerLicenses(filter = { $top: 10 }, token = null) {
   } catch (error) {
     return error;
   }
-}
+};
 
-async function getSalesLineId(type, no, line_no) {
+exports.getSalesLineId = async (type, no, line_no) => {
   const filter = {
     $filter: `DocumentType eq '${type}' and DocumentNo eq '${no}' and LineNo eq ${line_no}`,
   };
-  let response = await BC.querySalesLines(filter);
+  let response = await exports.findQuerySalesLines(filter);
   const system_id = response[0].SystemId;
   return system_id;
 }
 
-module.exports = {
-  findItems,
-  createShopifyProduct,
-  getShopifyProduct,
-  updateShopifyProduct,
-  findQuantities,
-  findSalesOrders,
-  findSalesLines,
-  updateSalesOrder,
-  findLicensePlates,
-  findItemCategories,
-  findShopifyProducts,
-  findShopifyVariants,
-  createShopifyVariant,
-  getShopifyVariant,
-  deleteShopifyVariant,
-  createOrUpdateShopifyVariant,
-  findItemReferenceEntries,
-  findSalesPrices,
-  findItemAttributes,
-  findPostedSalesShipments,
-  findPostedSalesShipmentLines,
-  findCustomerCards,
-  findPostedSalesInvoices,
-  findPostedSalesInvoiceLines,
-  findQuerySalesLines,
-  findSalesLineQuoteKeys,
-  findSalesHeaderQuery,
-  findZipCodes,
-  findAssemblyBom,
-  findAvalaraTransactions,
-  findCustomerShipmentAddresses,
-  findContacts,
-  findBomParents,
-  findBomChildren,
-  getItemByNumber,
-  findCustomerLicenses,
-  createSalesLineQuoteKey,
-  getInvoiceByNumber,
-  getCustomerByNumber,
-  updateItemByNumber,
-  getSalesPrice,
-  updateSalesPrice,
-};
+
