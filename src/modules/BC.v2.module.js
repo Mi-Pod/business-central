@@ -37,7 +37,6 @@ exports.getPurchaseReceipts = async (params = { $top: 10 }, token = null) => {
   return res.value;
 };
 
-
 exports.getPurchaseReceiptById = async (id, token = null) => {
   const endpoint = {
     api: "v2.0",
@@ -45,7 +44,7 @@ exports.getPurchaseReceiptById = async (id, token = null) => {
   };
   const res = await getBC(endpoint, {}, token);
   return res;
-}
+};
 
 exports.getPurchaseReceiptLinesById = async (id, params = {}, token = null) => {
   const endpoint = {
@@ -54,9 +53,12 @@ exports.getPurchaseReceiptLinesById = async (id, params = {}, token = null) => {
   };
   const res = await getBC(endpoint, params, token);
   return res.value;
-}
+};
 // salespeoplePurchasers
-exports.getSalespeoplePurchasers = async (params = { $top: 10 }, token = null) => {
+exports.getSalespeoplePurchasers = async (
+  params = { $top: 10 },
+  token = null,
+) => {
   const endpoint = {
     api: "v2.0",
     target: "salespeoplePurchasers",
@@ -73,7 +75,6 @@ exports.getSalespersonById = async (id, token = null) => {
   const res = await getBC(endpoint, {}, token);
   return res.value;
 };
-
 
 // Customers
 
@@ -130,7 +131,7 @@ exports.updateCustomerCard = async (customer_no, input, token = null) => {
 
 exports.getCustomersWithFinancialDetail = async (
   params = { $top: 10 },
-  token = null
+  token = null,
 ) => {
   const endpoint = {
     api: "v2.0",
@@ -207,7 +208,12 @@ exports.createShipToAddress = async (input, token = null) => {
   }
 };
 
-exports.updateShipToAddress = async (customer_no, code, input, token = null) => {
+exports.updateShipToAddress = async (
+  customer_no,
+  code,
+  input,
+  token = null,
+) => {
   const endpoint = {
     api: "Silverware/apiGroup/v1.0",
     target: `shipToAddresses(${customer_no},${code})`,
@@ -255,7 +261,12 @@ exports.getSalesOrders = async (params = { $top: 10 }, token = null) => {
   }
 };
 
-exports.patchSalesOrder = async (system_id, input, etag = null, token = null) => {
+exports.patchSalesOrder = async (
+  system_id,
+  input,
+  etag = null,
+  token = null,
+) => {
   const endpoint = {
     api: "v2.0",
     target: `salesOrders(${system_id})`,
@@ -302,7 +313,7 @@ exports.updateSalesOrderHeader = async (
   order_no,
   token = null,
   etag = null,
-  input
+  input,
 ) => {
   const endpoint = {
     api: "Silverware/apiGroup/v1.0",
@@ -403,7 +414,11 @@ exports.getSalesLines = async (params = { $top: 10 }, token = null) => {
   }
 };
 
-exports.getSalesLinesByOrderId = async (id, token = null, params = { $top: 10 }) => {
+exports.getSalesLinesByOrderId = async (
+  id,
+  token = null,
+  params = { $top: 10 },
+) => {
   const endpoint = {
     api: "v2.0",
     target: `salesOrders(${id})/salesOrderLines`,
@@ -485,7 +500,12 @@ exports.updateSalesLine = async (line_id, input, etag, token = null) => {
   }
 };
 
-exports.updateSalesOrderLine = async (order_no, line_no, input, token = null) => {
+exports.updateSalesOrderLine = async (
+  order_no,
+  line_no,
+  input,
+  token = null,
+) => {
   const endpoint = {
     api: "Silverware/apiGroup/v1.0",
     target: `salesLines(documentType='Order',documentNo='${order_no}',lineNo=${line_no})`,
@@ -524,7 +544,7 @@ exports.getSalesInvoiceById = async (id, token = null) => {
 exports.getSalesInvoiceLinesById = async (
   id,
   token = null,
-  params = { $top: 10 }
+  params = { $top: 10 },
 ) => {
   const endpoint = {
     api: "v2.0",
@@ -617,7 +637,7 @@ exports.createSalesQuoteLine = async (input, token = null) => {
 exports.createSalesQuoteLineBySalesQuoteId = async (
   system_id,
   input,
-  token = null
+  token = null,
 ) => {
   const endpoint = {
     api: "v2.0",
@@ -659,7 +679,7 @@ exports.getPurchaseOrderById = async (id, token = null) => {
 exports.getPurchaseOrderLinesById = async (
   id,
   token = null,
-  params = { $top: 10 }
+  params = { $top: 10 },
 ) => {
   const endpoint = {
     api: "v2.0",
@@ -739,7 +759,10 @@ exports.getSalesCreditMemoLinesByDocumentId = async (id, token = null) => {
   const res = await getBC(endpoint, {}, token);
   return res;
 };
-exports.getSalesCreditMemoLines = async (params = {$top: 10}, token = null) => {
+exports.getSalesCreditMemoLines = async (
+  params = { $top: 10 },
+  token = null,
+) => {
   const endpoint = {
     api: "v2.0",
     target: `salesCreditMemoLines`,
@@ -810,4 +833,98 @@ exports.getCustomerByNo = async (customer_no, token = null) => {
   }
 };
 
+// Bin Extension
 
+exports.getBinContents = async (params = { $top: 10 }, token = null) => {
+  const endpoint = {
+    api: "mioneBrands/warehouse/v1.0",
+    target: "binContents",
+  };
+  const res = await getBC(endpoint, params, token);
+  return res;
+};
+
+exports.getBinTypes = async (params = { $top: 10 }, token = null) => {
+  const endpoint = {
+    api: "mioneBrands/warehouse/v1.0",
+    target: "binTypes",
+  };
+  const res = await getBC(endpoint, params, token);
+  return res;
+};
+
+exports.getAssemblyLines = async (params = { $top: 10 }, token = null) => {
+  const endpoint = {
+    api: "mioneBrands/warehouse/v1.0",
+    target: "assemblyLines",
+  };
+  const res = await getBC(endpoint, params, token);
+  return res;
+};
+
+exports.getAssemblyLinks = async (params = { $top: 10 }, token = null) => {
+  const endpoint = {
+    api: "mioneBrands/warehouse/v1.0",
+    target: "assemblyLinks",
+  };
+  const res = await getBC(endpoint, params, token);
+  return res;
+};
+
+exports.getAssemblyLines = async (params = { $top: 10 }, token = null) => {
+  const endpoint = {
+    api: "mioneBrands/warehouse/v1.0",
+    target: "assemblyLines",
+  };
+  const res = await getBC(endpoint, params, token);
+  return res;
+};
+
+exports.getAssemblyHeaders = async (params = { $top: 10 }, token = null) => {
+  const endpoint = {
+    api: "mioneBrands/warehouse/v1.0",
+    target: "assemblyHeaders",
+  };
+  const res = await getBC(endpoint, params, token);
+  return res;
+};
+
+exports.getBinRassignments = async (
+  params = { $top: 10, $count: true },
+  token = null,
+) => {
+  const res = await getBC(endpoint, params, token);
+  return res.value;
+};
+
+exports.reassignAssemblyLine = async (
+  assemblyLineId,
+  newBinCode,
+  token = null,
+) => {
+  const endpoint = {
+    api: "mioneBrands/warehouse/v1.0",
+    target: "binReassignments",
+  };
+  const body = {
+    targetType: "AssemblyLine",
+    assemblyLineId,
+    newBinCode,
+  };
+  const res = await postBC(endpoint, body, token);
+  return res;
+};
+
+exports.reassignSalesLine = async (salesLineId, newBinCode, token = null) => {
+  const endpoint = {
+    api: "mioneBrands/warehouse/v1.0",
+    target: "binReassignments",
+  };
+  const body = {
+    targetType: "SalesLine",
+    salesLineId,
+    newBinCode,
+  };
+  const res = await postBC(endpoint, body, token);
+  return res;
+};
