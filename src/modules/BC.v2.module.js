@@ -928,3 +928,31 @@ exports.reassignSalesLine = async (salesLineId, newBinCode, token = null) => {
   const res = await postBC(endpoint, body, token);
   return res;
 };
+
+exports.getBinLines = async (
+  params = { $top: 10, $count: true },
+  token = null,
+) => {
+  
+  const endpoint = {
+    api: "mioneBrands/warehouse/v1.0",
+    target: `salesLine_wBins`,
+  };
+
+  const res = await getBC(endpoint, params, token);
+  return res;
+};
+
+exports.getZones = async (
+  params = { $top: 10, $count: true },
+  token = null,
+) => {
+  
+  const endpoint = {
+    api: "mioneBrands/warehouse/v1.0",
+    target: `zones`,
+  };
+
+  const res = await getBC(endpoint, params, token);
+  return res;
+};
