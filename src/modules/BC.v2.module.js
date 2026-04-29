@@ -956,3 +956,18 @@ exports.getZones = async (
   const res = await getBC(endpoint, params, token);
   return res;
 };
+
+
+exports.getLocations = async (
+  params = { $top: 10, $count: true },
+  token = null,
+) => {
+  
+  const endpoint = {
+    api: "v2.0",
+    target: `locations`,
+  };
+
+  const res = await getBC(endpoint, params, token);
+  return res;
+};
