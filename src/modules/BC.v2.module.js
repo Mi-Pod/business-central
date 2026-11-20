@@ -346,59 +346,31 @@ exports.createSalesOrder = async (input) => {
   }
 };
 
+async function updateOrderState(order_no, token, input) {
+  // Read the order by its full key for a fresh ETag before each write.
+  const result = await exports.updateSalesOrderHeader(
+    order_no,
+    token,
+    null,
+    input,
+  );
+  if (result instanceof Error) {
+    throw result;
+  }
+}
+
 exports.openOrder = async (order_no) => {
   const token = await getAccessToken();
-  const filter = {
-    $filter: `no eq '${order_no}'`,
-  };
-  const sales_headers = await exports.getSalesHeaders(filter, token);
-  let etag = null;
-  if (sales_headers.data && sales_headers.data.length > 0) {
-    etag = sales_headers[0]["@odata.etag"];
-  }
-  const inputs = [
-    {
-      swcSVReleaseOrder: true,
-    },
-    {
-      swcSVReleaseOrder: false,
-    },
-  ];
-  for (let i = 0; i < inputs.length; i++) {
-    await exports.updateSalesOrderHeader(order_no, token, etag, inputs[i]);
-    var delayInMilliseconds = 3000; //1 second
-
-    setTimeout(function () {
-      //your code to be executed after 1 second
-    }, delayInMilliseconds);
-  }
+  await updateOrderState(order_no, token, { swcSVReleaseOrder: true });
+  await updateOrderState(order_no, token, { swcSVReleaseOrder: false });
 };
 
 exports.releaseOrder = async (order_no) => {
   const token = await getAccessToken();
-  const filter = {
-    $filter: `no eq '${order_no}'`,
-  };
-  const sales_headers = await exports.getSalesHeaders(filter, token);
-
-  let etag = null;
-  if (sales_headers && sales_headers.length > 0) {
-    etag = sales_headers[0]["@odata.etag"];
-  }
-  const inputs = [
-    {
-      swcSVIGENCalced: true,
-      swcSVReleaseOrder: true,
-    },
-  ];
-  for (let i = 0; i < inputs.length; i++) {
-    await exports.updateSalesOrderHeader(order_no, token, etag, inputs[i]);
-    var delayInMilliseconds = 3000; //1 second
-
-    setTimeout(function () {
-      //your code to be executed after 1 second
-    }, delayInMilliseconds);
-  }
+  await updateOrderState(order_no, token, {
+    swcSVIGENCalced: true,
+    swcSVReleaseOrder: true,
+  });
 };
 
 exports.getSalesLines = async (params = { $top: 10 }, token = null) => {
@@ -893,6 +865,10 @@ exports.getBinRassignments = async (
   params = { $top: 10, $count: true },
   token = null,
 ) => {
+  const endpoint = {
+    api: "mioneBrands/warehouse/v1.0",
+    target: "binReassignments",
+  };
   const res = await getBC(endpoint, params, token);
   return res.value;
 };

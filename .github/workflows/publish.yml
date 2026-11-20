@@ -8,31 +8,42 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
 
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
       - name: 🧰 Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24"
           registry-url: "https://registry.npmjs.org/"
-          cache: "npm"
+          package-manager-cache: false
+
+      - name: Check that the tag matches the package version
+        shell: node {0}
+        run: |
+          const { version } = require(`${process.cwd()}/package.json`);
+          const expectedTag = `v${version}`;
+          if (process.env.GITHUB_REF_NAME !== expectedTag) {
+            console.error(`Release tag must be ${expectedTag} to match package.json.`);
+            process.exitCode = 1;
+          }
 
       - name: 📦 Install dependencies
         run: npm ci
 
-      - name: Inject environment variables
-        run: |
-          echo "OAUTH_CLIENT=${{ secrets.OAUTH_CLIENT }}" >> .env
-          echo "OAUTH_SECRET=${{ secrets.OAUTH_SECRET }}" >> .env
-          echo "BC_TENANT=${{ secrets.BC_TENANT }}" >> .env
-          echo "BC_ENVIRONMENT=${{ secrets.BC_ENVIRONMENT }}" >> .env
-          echo "BC_COMPANY=${{ secrets.BC_COMPANY }}" >> .env
-
       - name: 🧪 Run tests
         run: npm test
+        env:
+          OAUTH_CLIENT: ${{ secrets.OAUTH_CLIENT }}
+          OAUTH_SECRET: ${{ secrets.OAUTH_SECRET }}
+          BC_TENANT: ${{ secrets.BC_TENANT }}
+          BC_ENVIRONMENT: ${{ secrets.BC_ENVIRONMENT }}
+          BC_COMPANY: ${{ secrets.BC_COMPANY }}
 
       - name: 📝 Generate release notes
         id: changelog
@@ -41,7 +52,12 @@ jobs:
           git log -1 --pretty=format:"%s%n%n%b" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+      - name: Publish to npm using OIDC
+        id: npm_publish
+        run: npm publish
+
       - name: 📢 Create GitHub Release
+        if: ${{ success() || (failure() && steps.npm_publish.outcome == 'failure') }}
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
